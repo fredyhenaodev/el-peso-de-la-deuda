@@ -136,7 +136,8 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
   .debt .f-name { grid-column: 1 / -1; }
   #gastos { grid-template-columns: minmax(0, 1fr); }
   .tiles.plan { grid-template-columns: minmax(0, 1fr) !important; }
-  #g6, #g1 { grid-template-columns: minmax(0, 1fr); }
+  #anual { grid-template-columns: minmax(0, 1fr) !important; }
+  #gridComp, #gridIng { grid-template-columns: minmax(0, 1fr); }
   .step:has(#h4s) > .grid2 { grid-template-columns: minmax(0, 1fr); }
   .seg { display: flex; width: 100%; }
   .compare th, .compare td { padding: 8px 4px; font-size: 13px; }
@@ -166,7 +167,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
     <section class="step" aria-labelledby="h1s">
       <div class="step-head"><span class="num">1</span><div><h2 id="h1s">Ingresos y gastos del mes</h2><p>De los dos: lo que entra a la casa entre ambos.</p></div></div>
       <div class="field" style="max-width:420px"><label for="pareja">Nombre de la pareja</label><div class="inp"><input id="pareja" class="np" placeholder="Ej.: Andrés y Paola"></div></div>
-      <div class="grid2" id="g1">
+      <div class="grid2" id="gridIng">
         <div class="box">
           <h3>Ingresos</h3>
           <div class="field"><label for="i1">Ingresos de él</label><div class="inp"><span class="pre">$</span><input id="i1" class="m" inputmode="numeric" value="3.200.000"></div></div>
@@ -180,6 +181,13 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
           <div class="sum"><span>Total gastos</span><span id="tGas"></span></div>
           <p class="hint">En seguros, los que pagan aparte. Si el seguro viene incluido en la cuota de un crédito, no lo repitan aquí: ya está en la cuota.</p>
         </div>
+      </div>
+      <div class="box" style="background:var(--accent-soft)">
+        <h3>Gastos que llegan una vez al año</h3>
+        <p class="hint" style="font-size:14px;color:var(--ink-2)">Son los que desbaratan el presupuesto porque “no estaban en la cuenta”. Escriban lo que pagan en el año y la página calcula cuánto apartar cada mes para que no les toque endeudarse cuando lleguen.</p>
+        <div class="grid4" id="anual" style="grid-template-columns:repeat(3,minmax(0,1fr));align-items:end"></div>
+        <div class="sum"><span>Al año <span id="tAnu"></span> · apartar cada mes</span><span id="tAnuM"></span></div>
+        <p class="hint">Lo que apartan cada mes ya queda sumado en el total de gastos.</p>
       </div>
     </section>
 
@@ -291,7 +299,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
     <!-- 6 -->
     <section class="step" aria-labelledby="h6s">
       <div class="step-head"><span class="num">6</span><div><h2 id="h6s">Compromisos y acompañamiento</h2><p>Tres compromisos escritos y la fecha del primer encuentro. Luego, el plan se va con ellos al celular.</p></div></div>
-      <div class="grid2" id="g6">
+      <div class="grid2" id="gridComp">
         <div class="box">
           <h3>Nuestros compromisos</h3>
           <div id="comps" style="display:grid;gap:8px"></div>
@@ -330,7 +338,9 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
   function mesAno(m) { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + m); const s = d.toLocaleDateString('es-CO', { month: 'long', year: 'numeric' }); return s.charAt(0).toUpperCase() + s.slice(1); }
 
   // ---------- Gastos ----------
-  const GASTOS = [['Diezmo y ofrendas', 450000], ['Arriendo o administración', 1100000], ['Servicios y celular', 420000], ['Mercado', 900000], ['Transporte o gasolina', 300000], ['Educación', 0], ['Salud', 0], ['Seguros (vida, carro, SOAT, hogar)', 0], ['Otros', 200000]];
+  const GASTOS = [['Diezmo y ofrendas', 450000], ['Arriendo o administración', 1100000], ['Servicios y celular', 420000], ['Mercado', 900000], ['Transporte o gasolina', 300000], ['Educación', 0], ['Salud', 0], ['Seguros (vida, carro, hogar)', 0], ['Otros', 200000]];
+  const ANUAL = [['SOAT', 0], ['Revisión técnico-mecánica', 0], ['Impuesto del vehículo', 0], ['Impuesto predial de la casa', 0], ['Declaración de renta (lo que les toque pagar)', 0], ['Otros del año (matrículas, útiles, diciembre)', 0]];
+  $('anual').innerHTML = ANUAL.map((g, k) => '<div class="field"><label for="a' + k + '">' + g[0] + '</label><div class="inp"><span class="pre">$</span><input id="a' + k + '" class="m" inputmode="numeric" value="' + dots(g[1]) + '" placeholder="0"><span class="suf">al año</span></div></div>').join('');
   $('gastos').innerHTML = GASTOS.map((g, k) => '<div class="field"><label for="g' + k + '">' + g[0] + '</label><div class="inp"><span class="pre">$</span><input id="g' + k + '" class="m" inputmode="numeric" value="' + dots(g[1]) + '" placeholder="0"></div></div>').join('');
 
   // ---------- Deudas ----------
@@ -440,8 +450,10 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
   let method = 'nieve', last = null;
   function update() {
     const ing = ['i1', 'i2', 'i3'].reduce((a, id) => a + digits($(id).value), 0);
-    const gas = GASTOS.reduce((a, g, k) => a + digits($('g' + k).value), 0);
-    $('tIng').textContent = fmt(ing); $('tGas').textContent = fmt(gas);
+    const anu = ANUAL.reduce((a, g, k) => a + digits($('a' + k).value), 0), anuM = anu / 12;
+    const gas = GASTOS.reduce((a, g, k) => a + digits($('g' + k).value), 0) + anuM;
+    $('tAnu').textContent = fmt(anu); $('tAnuM').textContent = fmt(anuM);
+    $('tIng').textContent = fmt(ing); $('tGas').textContent = fmt(gas) + (anuM ? ' (con ' + fmt(anuM) + ' del año)' : '');
     const debts = readDebts();
     document.querySelectorAll('.debt .bad').forEach(p => { p.hidden = true; });
     let bad = false;
@@ -506,16 +518,17 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
     } else { $('abonoA').hidden = true; }
     const row = (name, s, sel) => '<tr' + (sel ? ' class="sel"' : '') + '><td>' + name + '</td><td>' + (s.stuck ? '+600' : s.months) + '</td><td>' + fmt(s.interest) + '</td><td>' + fmt(s.total) + '</td></tr>';
     $('cmp').innerHTML = row('Solo mínimos', base, false) + row('Bola de nieve', nieve, method === 'nieve') + row('Avalancha', aval, method === 'avalancha');
-    last = { ing, gas, cuotas, deuda, carga, libre, extra, debts, ord, plan, base, sale, lump, gainM };
+    last = { ing, gas, anuM, cuotas, deuda, carga, libre, extra, debts, ord, plan, base, sale, lump, gainM };
     const t = resumen(); $('wa').href = 'https://wa.me/?text=' + encodeURIComponent(t);
     updLink();
   }
 
   function resumen() {
     if (!last) return '';
-    const { ing, gas, cuotas, deuda, carga, libre, extra, debts, ord, plan, base, sale, lump, gainM } = last;
+    const { ing, gas, anuM, cuotas, deuda, carga, libre, extra, debts, ord, plan, base, sale, lump, gainM } = last;
     const L = ['PLAN PARA SALIR DE DEUDAS', '',
       'Ingresos: ' + fmt(ing) + ' · Gastos: ' + fmt(gas) + ' · Cuotas: ' + fmt(cuotas),
+      ...(anuM ? ['Gastos del año: ' + fmt(anuM * 12) + ' → apartar ' + fmt(anuM) + ' al mes'] : []),
       'Deuda total: ' + fmt(deuda) + ' · Carga: ' + Math.round(carga * 100) + ' % · Libre: ' + fmt(libre), '',
       'Método: ' + (method === 'nieve' ? 'bola de nieve' : 'avalancha') + ' · Abono extra: ' + fmt(extra) + ' al mes', 'El abono extra va a: ' + debts[ord[0]].name + '. Cuando la terminen, pasa a la siguiente.'];
     if (sale.list.length) {

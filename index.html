@@ -131,6 +131,18 @@ summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; b
 .compare td small { display: block; font-size: 13px; font-weight: 500; color: var(--muted); }
 .tablebox { overflow-x: auto; }
 
+.half { border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: grid; gap: 14px; background: var(--surface); }
+.half h3 { margin: 0; font-size: 18px; }
+.half .lead { margin: 0; font-size: 16px; color: var(--ink-2); }
+.half .lead b { color: var(--ink); }
+.hb { display: grid; gap: 6px; }
+.hb .lbl2 { display: flex; justify-content: space-between; gap: 10px; font-size: 14px; font-weight: 600; color: var(--ink-2); flex-wrap: wrap; }
+.hb .track { display: flex; height: 26px; border-radius: 8px; overflow: hidden; gap: 2px; background: var(--surface); }
+.hb .track i { display: block; height: 100%; min-width: 2px; }
+.hb .track i:first-child { border-radius: 8px 0 0 8px; } .hb .track i:last-child { border-radius: 0 8px 8px 0; }
+.i-int { background: var(--s-base); } .i-cap { background: var(--good); }
+.hb small { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.half .why { margin: 0; font-size: 15px; background: var(--sky-2); border-radius: 12px; padding: 12px 14px; }
 .legend { display: flex; flex-wrap: wrap; gap: 18px; font-size: 14px; color: var(--ink-2); }
 .legend span { display: inline-flex; align-items: center; gap: 8px; }
 .legend i { width: 18px; height: 4px; border-radius: 2px; display: inline-block; }
@@ -356,6 +368,14 @@ a.btn { display: inline-flex; align-items: center; justify-content: center; text
       <div class="chartwrap" id="chartwrap">
         <svg id="chart" viewBox="0 0 880 320" role="img" aria-label="Lo que debes mes a mes, si sigues igual y con el aumento"></svg>
         <div class="tip" id="tip" hidden></div>
+      </div>
+      <div class="half" id="half" hidden>
+        <h3>¿Por qué al principio casi no baja la deuda?</h3>
+        <p class="lead" id="half-lead"></p>
+        <div class="legend"><span><i class="i-int" style="width:12px;height:12px;border-radius:3px;display:inline-block"></i>Intereses (se los queda el banco)</span><span><i class="i-cap" style="width:12px;height:12px;border-radius:3px;display:inline-block"></i>Capital (baja tu deuda)</span></div>
+        <div class="hb" id="hb1"></div>
+        <div class="hb" id="hb2"></div>
+        <p class="why" id="half-why"></p>
       </div>
       <details class="more">
         <summary>Ver la comparación completa</summary>
@@ -989,6 +1009,21 @@ function(t){t.__bidiEngine__=t.prototype.__bidiEngine__=function(t){var r,n,i,a,
       $('m-c-int').textContent = fmt(C.interest);
       $('verdict').innerHTML = 'Reducir el plazo te ahorra <b>' + fmt(C.interest - B.interest) + '</b> más en intereses.';
     }
+
+    // Intereses al principio: el saldo es más alto, entonces la mayor parte de la cuota se va en intereses
+    if (A.rows.length >= 4) {
+      const h = Math.floor(A.rows.length / 2), r1 = A.rows.slice(0, h), r2 = A.rows.slice(h);
+      const sum = (rs, k) => rs.reduce((a, r) => a + r[k], 0);
+      const i1 = sum(r1, 'int'), c1 = sum(r1, 'cap'), i2 = sum(r2, 'int'), c2 = sum(r2, 'cap');
+      const f = A.rows[0], pctInt = Math.round(f.int / f.cuota * 100), pctHalf = Math.round(i1 / A.interest * 100);
+      const mitad = A.rows.findIndex(r => r.bal <= d.P / 2) + 1;
+      const bar = (t, sub, ii, cc) => '<div class="lbl2"><span>' + t + '</span><span>' + sub + '</span></div><div class="track" role="img" aria-label="' + t + ': ' + fmt(ii) + ' de intereses y ' + fmt(cc) + ' de capital"><i class="i-int" style="flex:' + ii + '"></i><i class="i-cap" style="flex:' + cc + '"></i></div><small>Intereses ' + fmt(ii) + ' · Capital ' + fmt(cc) + '</small>';
+      $('half').hidden = false;
+      $('half-lead').innerHTML = 'De tu primera cuota, <b>' + fmt(f.int) + ' (' + pctInt + ' %) son intereses</b> y solo ' + fmt(f.cuota - f.int) + ' bajan la deuda. Si sigues igual, en la primera mitad del plazo pagas <b>el ' + pctHalf + ' % de todos los intereses</b>' + (mitad > 0 ? ', y vas a deber la mitad del crédito apenas en el <b>mes ' + mitad + '</b> de ' + A.months : '') + '.';
+      $('hb1').innerHTML = bar('Primera mitad', 'meses 1 a ' + h, i1, c1);
+      $('hb2').innerHTML = bar('Segunda mitad', 'meses ' + (h + 1) + ' a ' + A.months, i2, c2);
+      $('half-why').innerHTML = 'No es un cobro escondido: el interés se calcula cada mes sobre lo que debes, y al principio debes casi todo. Por eso <b>el abono extra rinde más al principio</b>: cada peso que abonas hoy deja de cobrar intereses todos los meses que faltan.';
+    } else { $('half').hidden = true; }
 
     last = { d, pay, newPay, A, B, total, ahorro, menos };
     if (typeof renderLetter === 'function' && $('x-letter')) try { renderLetter(); } catch (e) {}
