@@ -74,7 +74,8 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
 
 /* Plan */
 .seg { display: inline-flex; border: 1.5px solid var(--line); border-radius: 12px; overflow: hidden; }
-.seg button { border: 0; background: var(--surface); color: var(--ink-2); font: 700 15px var(--f-ui); padding: 10px 16px; cursor: pointer; }
+.seg button { border: 0; background: var(--surface); color: var(--ink-2); font: 700 15px var(--f-ui); padding: 10px 16px; cursor: pointer; white-space: nowrap; flex: 1; }
+.seg { max-width: 100%; }
 .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
 .compare { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
 .compare th, .compare td { padding: 9px 8px; border-bottom: 1px solid var(--line); text-align: right; }
@@ -91,6 +92,17 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
 .tablebox { overflow-x: auto; }
 .note { font-size: 13px; color: var(--muted); margin: 0; }
 .status { font-size: 14px; color: var(--muted); margin: 0; }
+
+/* A dónde va el abono */
+.target { background: var(--accent-soft); border: 2px solid var(--accent); }
+.target .now { margin: 0; font-size: 17px; }
+.target .now b { color: var(--accent); }
+.snow { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.snow li { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 10px; align-items: baseline; font-size: 14px; color: var(--ink-2); }
+.snow li .k { width: 26px; height: 26px; border-radius: 50%; background: var(--surface); color: var(--accent); display: grid; place-items: center; font-weight: 800; font-size: 13px; }
+.snow li:first-child .k { background: var(--accent); color: var(--accent-ink); }
+.snow li .a { font-weight: 800; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.order .here { display: inline-block; margin-left: 8px; background: var(--accent); color: var(--accent-ink); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; border-radius: 999px; padding: 2px 8px; vertical-align: middle; }
 
 /* Lo que no usan */
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -125,6 +137,8 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
   #gastos { grid-template-columns: minmax(0, 1fr); }
   .tiles.plan { grid-template-columns: minmax(0, 1fr) !important; }
   #g6, #g1 { grid-template-columns: minmax(0, 1fr); }
+  .step:has(#h4s) > .grid2 { grid-template-columns: minmax(0, 1fr); }
+  .seg { display: flex; width: 100%; }
   .compare th, .compare td { padding: 8px 4px; font-size: 13px; }
   .step { padding: 16px; }
 }
@@ -248,6 +262,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
           <p class="hint" id="extraHint"></p>
         </div>
       </div>
+      <div class="box target" id="abonoA" aria-live="polite"></div>
       <div class="tiles plan" style="grid-template-columns:repeat(3,minmax(0,1fr))">
         <div class="tile good"><span>Libres de deudas en</span><b id="pTiempo"></b><small id="pFecha"></small></div>
         <div class="tile good"><span>Terminan antes</span><b id="pAntes"></b><small>que pagando solo mínimos</small></div>
@@ -451,7 +466,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
 
     const extra = digits($('extra').value);
     $('mHint').textContent = method === 'nieve' ? 'Primero la deuda más pequeña: victorias rápidas que dan ánimo.' : 'Primero la deuda con la tasa más alta: se pagan menos intereses.';
-    if (!debts.length) { readItems(); $('order').innerHTML = '<li><span></span><span class="d">Agrega al menos una deuda con saldo.</span></li>'; $('cmp').innerHTML = ''; ['pTiempo', 'pAntes', 'pAhorro'].forEach(id => $(id).textContent = '—'); $('pFecha').textContent = ''; last = null; return; }
+    if (!debts.length) { readItems(); $('abonoA').hidden = true; $('order').innerHTML = '<li><span></span><span class="d">Agrega al menos una deuda con saldo.</span></li>'; $('cmp').innerHTML = ''; ['pTiempo', 'pAntes', 'pAhorro'].forEach(id => $(id).textContent = '—'); $('pFecha').textContent = ''; last = null; return; }
     const base = simulate(debts, orderFor(debts, 'nieve'), 0, false);
     const sale = readItems(), lump = $('useSale').checked ? sale.total : 0;
     const nieve = simulate(debts, orderFor(debts, 'nieve'), extra, true, lump);
@@ -473,8 +488,22 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
     $('order').innerHTML = ord.map((j, n) => {
       const d = debts[j], tasaEA = (Math.pow(1 + d.i, 12) - 1) * 100;
       const pct = plan.months ? Math.max(4, plan.paidAt[j] / plan.months * 100) : 0;
-      return '<li><span class="n">' + (n + 1) + '</span><div><div class="t">' + esc(d.name) + '</div><div class="d">Saldo ' + fmt(d.s) + ' · ' + tasaEA.toFixed(1).replace('.', ',') + ' % al año · queda pagada ' + (plan.paidAt[j] ? 'en el mes ' + plan.paidAt[j] + ' (' + mesAno(plan.paidAt[j]) + ')' : 'después de 50 años') + '</div><div class="bar"><i style="width:' + pct + '%"></i></div></div></li>';
+      return '<li><span class="n">' + (n + 1) + '</span><div><div class="t">' + esc(d.name) + (n === 0 && extra + lump > 0 ? '<span class="here">Aquí va el abono</span>' : '') + '</div><div class="d">Saldo ' + fmt(d.s) + ' · ' + tasaEA.toFixed(1).replace('.', ',') + ' % al año · queda pagada ' + (plan.paidAt[j] ? 'en el mes ' + plan.paidAt[j] + ' (' + mesAno(plan.paidAt[j]) + ')' : 'después de 50 años') + '</div><div class="bar"><i style="width:' + pct + '%"></i></div></div></li>';
     }).join('');
+    // a dónde va el abono extra: se acumula con las cuotas de las deudas que se terminan
+    if (extra + lump > 0) {
+      let acum = extra, html = '';
+      ord.forEach((j, n) => {
+        const d = debts[j], desde = n === 0 ? 'Desde ya' : (plan.paidAt[ord[n - 1]] ? 'Desde ' + mesAno(plan.paidAt[ord[n - 1]]).toLowerCase() : 'Después');
+        if (n > 0) acum += debts[ord[n - 1]].c;
+        html += '<li><span class="k">' + (n + 1) + '</span><span>' + desde + ' → <b>' + esc(d.name) + '</b>' + '</span><span class="a">' + fmt(d.c + acum) + '/mes</span></li>';
+      });
+      const f = debts[ord[0]];
+      $('abonoA').hidden = false;
+      $('abonoA').innerHTML = '<p class="now">Cada mes paguen la cuota mínima de todas, y el abono extra' + (extra ? ' de <b>' + fmt(extra) + '</b>' : '') + ' va completo a <b>' + esc(f.name) + '</b>' + (lump ? ', más ' + fmt(lump) + ' de lo que vendan' : '') + '. Con su cuota, a esa deuda le entran ' + fmt(f.c + extra) + ' al mes.</p>' +
+        '<p class="hint" style="margin:0">' + (method === 'nieve' ? 'Es la de menor saldo (bola de nieve).' : 'Es la de tasa más alta (avalancha).') + ' Cuando la terminen, ese abono más su cuota pasa a la siguiente, y así crece:</p>' +
+        '<ol class="snow">' + html + '</ol>';
+    } else { $('abonoA').hidden = true; }
     const row = (name, s, sel) => '<tr' + (sel ? ' class="sel"' : '') + '><td>' + name + '</td><td>' + (s.stuck ? '+600' : s.months) + '</td><td>' + fmt(s.interest) + '</td><td>' + fmt(s.total) + '</td></tr>';
     $('cmp').innerHTML = row('Solo mínimos', base, false) + row('Bola de nieve', nieve, method === 'nieve') + row('Avalancha', aval, method === 'avalancha');
     last = { ing, gas, cuotas, deuda, carga, libre, extra, debts, ord, plan, base, sale, lump, gainM };
@@ -488,7 +517,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
     const L = ['PLAN PARA SALIR DE DEUDAS', '',
       'Ingresos: ' + fmt(ing) + ' · Gastos: ' + fmt(gas) + ' · Cuotas: ' + fmt(cuotas),
       'Deuda total: ' + fmt(deuda) + ' · Carga: ' + Math.round(carga * 100) + ' % · Libre: ' + fmt(libre), '',
-      'Método: ' + (method === 'nieve' ? 'bola de nieve' : 'avalancha') + ' · Abono extra: ' + fmt(extra) + ' al mes'];
+      'Método: ' + (method === 'nieve' ? 'bola de nieve' : 'avalancha') + ' · Abono extra: ' + fmt(extra) + ' al mes', 'El abono extra va a: ' + debts[ord[0]].name + '. Cuando la terminen, pasa a la siguiente.'];
     if (sale.list.length) {
       L.push('', 'Para vender (' + fmt(sale.total) + '):');
       sale.list.forEach(it => L.push('- ' + it.name + ': ' + fmt(it.v) + ' en ' + it.where + (it.sold ? ' (vendido)' : '')));
