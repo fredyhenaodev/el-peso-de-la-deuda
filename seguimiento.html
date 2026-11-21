@@ -141,7 +141,9 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
 
 /* Compromisos */
 .checks { display: grid; gap: 8px; }
-.check { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: center; }
+.check { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: center; }
+.check .x { height: 44px; }
+.addrow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
 .check input[type="checkbox"] { width: 26px; height: 26px; accent-color: var(--good); }
 .check .inp { min-height: 44px; }
 .check .inp input { font-size: 15px; font-weight: 500; }
@@ -309,6 +311,8 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
       <div class="head"><h2 id="h-comp">Nuestros compromisos</h2><small id="nComp"></small></div>
       <div class="mini"><i id="compBar" style="width:0%"></i></div>
       <div class="checks" id="checks"></div>
+      <form class="addrow" id="addComp"><div class="inp"><input id="newComp" class="np" placeholder="Escriban otro compromiso" aria-label="Nuevo compromiso"></div><button type="submit" class="btn small">+ Agregar</button></form>
+      <p class="note">Ideas: no sacar deudas nuevas, pagar de contado, llevar el presupuesto en una libreta, orar juntos por las finanzas, abonar la prima a la deuda.</p>
     </section>
 
     <!-- Ventas -->
@@ -321,8 +325,9 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
       </div>
       <div class="mini"><i id="sellBar" style="width:0%"></i></div>
       <ul class="sells" id="sells"></ul>
+      <form class="addrow" id="addSell"><div class="inp"><input id="newSell" class="np" placeholder="¿Qué más pueden vender?" aria-label="Algo para vender"></div><button type="submit" class="btn small">+ Agregar</button></form>
       <div class="field">
-        <span class="lbl">Agregar</span>
+        <span class="lbl">O toquen una idea</span>
         <div class="chips" id="chips"></div>
       </div>
       <p class="note">Entreguen en un lugar público y solo cuando vean la plata en la cuenta: una captura de pantalla no es un pago.</p>
@@ -510,13 +515,18 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
 
   // ---------- Compromisos ----------
   function renderChecks() {
-    $('checks').innerHTML = S.checks.map((c, i) => '<div class="check' + (c.ok ? ' ok' : '') + '"><input type="checkbox" id="c' + i + '"' + (c.ok ? ' checked' : '') + ' aria-label="Cumplido"><div class="inp"><input id="ct' + i + '" class="np" value="' + esc(c.t) + '" placeholder="Compromiso ' + (i + 1) + '"></div></div>').join('');
+    $('checks').innerHTML = S.checks.map((c, i) => '<div class="check' + (c.ok ? ' ok' : '') + '"><input type="checkbox" id="c' + i + '"' + (c.ok ? ' checked' : '') + ' aria-label="Cumplido"><div class="inp"><input id="ct' + i + '" class="np" value="' + esc(c.t) + '" placeholder="Compromiso ' + (i + 1) + '"></div><button type="button" class="x" id="cx' + i + '" aria-label="Quitar compromiso">×</button></div>').join('');
     S.checks.forEach((c, i) => {
       $('c' + i).addEventListener('change', e => { S.checks[i].ok = e.target.checked; e.target.parentElement.classList.toggle('ok', e.target.checked); store(); renderCompBar(); render(true); });
       $('ct' + i).addEventListener('input', e => { S.checks[i].t = e.target.value; store(); renderCompBar(); });
+      $('cx' + i).addEventListener('click', () => { S.checks.splice(i, 1); store(); renderChecks(); render(true); });
     });
     renderCompBar();
   }
+  $('addComp').addEventListener('submit', e => {
+    e.preventDefault(); const t = $('newComp').value.trim(); if (!t) { $('newComp').focus(); return; }
+    S.checks.push({ t, ok: false }); $('newComp').value = ''; store(); renderChecks(); render(true);
+  });
   function renderCompBar() {
     const w = S.checks.filter(c => c.t.trim()), ok = w.filter(c => c.ok).length;
     $('nComp').textContent = w.length ? ok + ' de ' + w.length + ' cumplidos' : '';
@@ -525,15 +535,20 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
 
   // ---------- Ventas ----------
   const PLAT = ['Facebook Marketplace', 'WhatsApp', 'Mercado Libre', 'TuCarro', 'GoTrendier', 'Decathlon Segunda Vida', 'Otro'];
-  const IDEAS = [['Ropa y zapatos', 'GoTrendier'], ['Celular o tablet', 'Mercado Libre'], ['Electrodoméstico', 'Facebook Marketplace'], ['Mueble', 'Facebook Marketplace'], ['Bicicleta o gimnasio', 'Facebook Marketplace'], ['Herramientas', 'Mercado Libre'], ['Cosas del bebé', 'Facebook Marketplace'], ['Consola', 'Mercado Libre'], ['Carro o moto', 'TuCarro'], ['Otra cosa', 'Facebook Marketplace']];
+  const IDEAS = [['Ropa y zapatos', 'GoTrendier'], ['Celular o tablet', 'Mercado Libre'], ['Electrodoméstico', 'Facebook Marketplace'], ['Mueble', 'Facebook Marketplace'], ['Bicicleta o gimnasio', 'Facebook Marketplace'], ['Herramientas', 'Mercado Libre'], ['Cosas del bebé', 'Facebook Marketplace'], ['Consola', 'Mercado Libre'], ['Carro o moto', 'TuCarro'], ['Joyas o relojes', 'Facebook Marketplace'], ['Juguetes', 'Facebook Marketplace'], ['Libros', 'Facebook Marketplace'], ['Instrumento musical', 'Mercado Libre']];
   $('chips').innerHTML = IDEAS.map((x, k) => '<button type="button" class="chip" data-k="' + k + '">+ ' + x[0] + '</button>').join('');
   $('chips').querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => {
     const x = IDEAS[b.dataset.k];
-    S.ventas.push({ n: x[0] === 'Otra cosa' ? '' : x[0], v: 0, w: x[1], sold: false, real: 0 });
+    S.ventas.push({ n: x[0], v: 0, w: x[1], sold: false, real: 0 });
     store(); renderSells();
     const items = $('sells').querySelectorAll('.sell'); const last = items[items.length - 1];
-    last.querySelector(x[0] === 'Otra cosa' ? '.vn' : '.vv').focus();
+    last.querySelector('.vv').focus();
   }));
+  $('addSell').addEventListener('submit', e => {
+    e.preventDefault(); const n = $('newSell').value.trim(); if (!n) { $('newSell').focus(); return; }
+    S.ventas.push({ n, v: 0, w: 'Facebook Marketplace', sold: false, real: 0 }); $('newSell').value = ''; store(); renderSells();
+    const items = $('sells').querySelectorAll('.sell'); items[items.length - 1].querySelector('.vv').focus();
+  });
   function renderSells() {
     $('sells').innerHTML = S.ventas.map((x, i) =>
       '<li class="sell' + (x.sold ? ' sold' : '') + '" data-i="' + i + '">' +
@@ -735,7 +750,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
   $('copy').addEventListener('click', () => { try { navigator.clipboard.writeText(resumen()).then(() => flash('Avance copiado.'), () => flash('No se pudo copiar.')); } catch (e) {} });
   $('copyBk').addEventListener('click', () => { try { navigator.clipboard.writeText(JSON.stringify(S)).then(() => flash('Respaldo copiado.'), () => { $('backup').select(); }); } catch (e) { $('backup').select(); } });
   $('restore').addEventListener('click', () => {
-    try { const v = JSON.parse($('backup').value); if (!v || !Array.isArray(v.debts)) throw 0; S = Object.assign(BLANK(), v); while (S.checks.length < 3) S.checks.push({ t: '', ok: false }); demo = false; store(); renderSetup(); renderChecks(); renderSells(); render(); flash('Datos restaurados.'); }
+    try { const v = JSON.parse($('backup').value); if (!v || !Array.isArray(v.debts)) throw 0; S = Object.assign(BLANK(), v); demo = false; store(); renderSetup(); renderChecks(); renderSells(); render(); flash('Datos restaurados.'); }
     catch (e) { flash('Ese texto no es un respaldo válido.'); }
   });
   $('reset').addEventListener('click', () => { $('resetAsk').hidden = false; });
