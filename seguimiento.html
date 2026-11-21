@@ -158,6 +158,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
 .sell-sum span { font-size: 13px; color: var(--ink-2); }
 .sell-sum b { font-size: 20px; font-variant-numeric: tabular-nums; }
 .sell-sum div.g b { color: var(--good); }
+.rule { margin: 0; background: var(--accent-soft); border-radius: 12px; padding: 10px 12px; font-size: 14px; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { border: 1.5px solid var(--line); background: var(--surface); color: var(--ink-2); font: 600 13px var(--f-ui); border-radius: 999px; padding: 7px 12px; cursor: pointer; min-height: 38px; }
 .chip:hover { border-color: var(--accent); color: var(--accent); }
@@ -244,7 +245,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
       <ol class="steps3">
         <li><b>1</b><span>Anoten sus deudas con el saldo del día de la asesoría.</span></li>
         <li><b>2</b><span>Cada mes copien el saldo nuevo del extracto.</span></li>
-        <li><b>3</b><span>Miren cómo baja, ganen medallas y celebren cada deuda pagada.</span></li>
+        <li><b>3</b><span>Vendan lo que no usan, miren cómo baja la deuda y celebren cada una que paguen.</span></li>
       </ol>
       <div class="row"><button type="button" class="btn light" id="goSetup">Anotar nuestras deudas</button><button type="button" class="btn ghost" id="demoIn" style="color:var(--hero-ink);border-color:var(--hero-2)">Ver un ejemplo</button></div>
     </section>
@@ -317,17 +318,18 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
 
     <!-- Ventas -->
     <section class="card" id="sellCard" aria-labelledby="h-s" hidden>
-      <div class="head"><h2 id="h-s">Lo que vamos a vender</h2><small id="nSell"></small></div>
-      <p class="sub">“Ve y vende el aceite, y paga a tus acreedores.” Lo que vendan va completo a la deuda que están atacando.</p>
+      <div class="head"><h2 id="h-s">Lo que no usamos y vamos a vender</h2><small id="nSell"></small></div>
+      <p class="sub">“Ve y vende el aceite, y paga a tus acreedores.” Solo lo que tienen guardado y no usan; lo que vendan va completo a la deuda que están atacando.</p>
+      <p class="rule"><b>La regla:</b> si no lo han usado en el último año, se vende. Lo que necesitan para la casa o para trabajar no se vende.</p>
       <div class="sell-sum">
         <div><span>Meta de venta</span><b id="sMeta">$0</b></div>
         <div class="g"><span>Ya vendimos</span><b id="sVend">$0</b></div>
       </div>
       <div class="mini"><i id="sellBar" style="width:0%"></i></div>
       <ul class="sells" id="sells"></ul>
-      <form class="addrow" id="addSell"><div class="inp"><input id="newSell" class="np" placeholder="¿Qué más pueden vender?" aria-label="Algo para vender"></div><button type="submit" class="btn small">+ Agregar</button></form>
+      <form class="addrow" id="addSell"><div class="inp"><input id="newSell" class="np" placeholder="¿Qué más tienen guardado que no usan?" aria-label="Algo que no usan para vender"></div><button type="submit" class="btn small">+ Agregar</button></form>
       <div class="field">
-        <span class="lbl">O toquen una idea</span>
+        <span class="lbl">Ideas de cosas que suelen estar guardadas</span>
         <div class="chips" id="chips"></div>
       </div>
       <p class="note">Entreguen en un lugar público y solo cuando vean la plata en la cuenta: una captura de pantalla no es un pago.</p>
@@ -535,7 +537,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
 
   // ---------- Ventas ----------
   const PLAT = ['Facebook Marketplace', 'WhatsApp', 'Mercado Libre', 'TuCarro', 'GoTrendier', 'Decathlon Segunda Vida', 'Otro'];
-  const IDEAS = [['Ropa y zapatos', 'GoTrendier'], ['Celular o tablet', 'Mercado Libre'], ['Electrodoméstico', 'Facebook Marketplace'], ['Mueble', 'Facebook Marketplace'], ['Bicicleta o gimnasio', 'Facebook Marketplace'], ['Herramientas', 'Mercado Libre'], ['Cosas del bebé', 'Facebook Marketplace'], ['Consola', 'Mercado Libre'], ['Carro o moto', 'TuCarro'], ['Joyas o relojes', 'Facebook Marketplace'], ['Juguetes', 'Facebook Marketplace'], ['Libros', 'Facebook Marketplace'], ['Instrumento musical', 'Mercado Libre']];
+  const IDEAS = [['Ropa que no se ponen', 'GoTrendier'], ['Celular viejo guardado', 'Mercado Libre'], ['Electrodoméstico que no usan', 'Facebook Marketplace'], ['Mueble que sobra', 'Facebook Marketplace'], ['Bicicleta o máquina quieta', 'Facebook Marketplace'], ['Herramientas sin uso', 'Mercado Libre'], ['Cosas que el bebé ya no usa', 'Facebook Marketplace'], ['Consola que nadie juega', 'Mercado Libre'], ['Carro o moto de más', 'TuCarro'], ['Joyas que no se ponen', 'Facebook Marketplace'], ['Juguetes olvidados', 'Facebook Marketplace'], ['Libros ya leídos', 'Facebook Marketplace'], ['Instrumento que nadie toca', 'Mercado Libre']];
   $('chips').innerHTML = IDEAS.map((x, k) => '<button type="button" class="chip" data-k="' + k + '">+ ' + x[0] + '</button>').join('');
   $('chips').querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => {
     const x = IDEAS[b.dataset.k];
@@ -713,7 +715,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
     if (ch.length) { L.push('', 'Compromisos:'); ch.forEach(c => L.push((c.ok ? '✔ ' : '○ ') + c.t)); }
     if (S.ventas.length) {
       const vend = S.ventas.filter(x => x.sold).reduce((a, x) => a + (x.real || x.v), 0);
-      L.push('', 'Lo que vamos a vender (vendido ' + fmt(vend) + '):');
+      L.push('', 'Lo que no usamos y vamos a vender (vendido ' + fmt(vend) + '):');
       S.ventas.forEach(x => L.push((x.sold ? '✔ ' : '○ ') + (x.n || 'Sin nombre') + ' · ' + (x.sold ? 'vendido en ' + fmt(x.real || x.v) : fmt(x.v) + ' en ' + x.w)));
     }
     L.push('', 'Encuentros: ' + S.enc.filter(Boolean).length + ' de 5');

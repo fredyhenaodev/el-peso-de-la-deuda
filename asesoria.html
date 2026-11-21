@@ -188,10 +188,11 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
 
     <!-- 4 -->
     <section class="step" aria-labelledby="h4v">
-      <div class="step-head"><span class="num">4</span><div><h2 id="h4v">¿Qué tienen en casa?</h2><p>Lo que no usan también puede pagar deudas. Recorran la casa juntos y anoten lo que pueden vender.</p></div></div>
+      <div class="step-head"><span class="num">4</span><div><h2 id="h4v">¿Qué tienen en casa?</h2><p>Lo que tienen guardado y no usan también puede pagar deudas. Recorran la casa juntos y anoten solo eso.</p></div></div>
       <p class="verse">“¿Qué tienes en casa?” Y ella dijo: “Tu sierva ninguna cosa tiene en casa, sino una vasija de aceite.” … “Ve y vende el aceite, y paga a tus acreedores.” — 2 Reyes 4:2, 7</p>
       <div class="field noprint">
-        <span class="lbl">Ideas para buscar (toquen para agregar)</span>
+        <p class="hint" style="font-size:14px;color:var(--ink-2)"><b>La regla:</b> si no lo han usado en el último año, se vende. Lo que necesitan para la casa o para trabajar no se vende.</p>
+        <span class="lbl">Ideas de cosas que suelen estar guardadas (toquen para agregar)</span>
         <div class="chips" id="chips"></div>
       </div>
       <div class="items" id="items"></div>
@@ -321,14 +322,14 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
   // ---------- Lo que no usan ----------
   const PLAT = ['Facebook Marketplace', 'WhatsApp', 'Mercado Libre', 'TuCarro', 'GoTrendier', 'Decathlon Segunda Vida', 'Otro'];
   const IDEAS = [
-    ['Ropa y zapatos', 'GoTrendier', 'Lo que no se han puesto en un año.'],
-    ['Celular o tablet anterior', 'Mercado Libre', 'Borren la información y restablézcanlo antes de venderlo.'],
-    ['Electrodoméstico que sobra', 'Facebook Marketplace', 'Pruébenlo y graben un video funcionando.'],
-    ['Mueble que no usan', 'Facebook Marketplace', 'Pongan medidas en la publicación.'],
-    ['Bicicleta o equipo de gimnasio', 'Facebook Marketplace', ''],
-    ['Herramientas', 'Mercado Libre', ''],
+    ['Ropa que no se ponen', 'GoTrendier', 'Lo que no se han puesto en un año.'],
+    ['Celular viejo guardado', 'Mercado Libre', 'Borren la información y restablézcanlo antes de venderlo.'],
+    ['Electrodoméstico que no usan', 'Facebook Marketplace', 'Pruébenlo y graben un video funcionando.'],
+    ['Mueble que sobra', 'Facebook Marketplace', 'Pongan medidas en la publicación.'],
+    ['Bicicleta o máquina quieta', 'Facebook Marketplace', ''],
+    ['Herramientas sin uso', 'Mercado Libre', 'Solo las que no necesitan para trabajar.'],
     ['Cosas del bebé que ya no le sirven', 'Facebook Marketplace', 'Coche, cuna y ropa de bebé se venden rápido.'],
-    ['Consola y videojuegos', 'Mercado Libre', ''],
+    ['Consola que nadie juega', 'Mercado Libre', ''],
     ['Carro o moto de más', 'TuCarro', 'Comparen con el valor de la tabla Fasecolda antes de poner precio.']
   ];
   $('chips').innerHTML = IDEAS.map((x, k) => '<button type="button" class="chip" data-k="' + k + '">+ ' + x[0] + '</button>').join('');
@@ -339,7 +340,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
     const el = document.createElement('div');
     el.className = 'item'; el.dataset.k = k;
     el.innerHTML =
-      '<div class="field f-name"><label for="vn' + k + '">Qué es</label><div class="inp"><input id="vn' + k + '" class="np" value="' + esc(it.n) + '" placeholder="Ej.: Horno microondas"></div></div>' +
+      '<div class="field f-name"><label for="vn' + k + '">Qué es</label><div class="inp"><input id="vn' + k + '" class="np" value="' + esc(it.n) + '" placeholder="Ej.: Horno que no usan"></div></div>' +
       '<div class="field"><label for="vv' + k + '">Valor estimado</label><div class="inp"><span class="pre">$</span><input id="vv' + k + '" class="m" inputmode="numeric" value="' + dots(it.v) + '" placeholder="0"></div></div>' +
       '<div class="field f-where"><label for="vw' + k + '">Dónde venderlo</label><div class="inp"><select id="vw' + k + '" class="full">' + PLAT.map(p => '<option' + (p === it.w ? ' selected' : '') + '>' + p + '</option>').join('') + '</select></div></div>' +
       '<label class="check"><input type="checkbox" id="vs' + k + '"> Vendido</label>' +
