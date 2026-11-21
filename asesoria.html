@@ -31,6 +31,7 @@ h1 { font-family: var(--f-display); font-weight: 600; font-size: clamp(34px, 6vw
 .intro a { color: var(--accent); }
 main .wrap { padding-block: 12px 48px; display: grid; gap: 20px; }
 .step { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px; display: grid; gap: 16px; }
+.step > *, .box > * { min-width: 0; }
 .step-head { display: flex; gap: 14px; align-items: flex-start; }
 .num { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-weight: 800; }
 .step-head h2 { font-size: 21px; margin: 3px 0 2px; line-height: 1.25; }
@@ -91,7 +92,33 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
 .note { font-size: 13px; color: var(--muted); margin: 0; }
 .status { font-size: 14px; color: var(--muted); margin: 0; }
 
+/* Lo que no usan */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1.5px solid var(--line); background: var(--surface); color: var(--ink-2); font: 600 14px var(--f-ui); border-radius: 999px; padding: 8px 14px; cursor: pointer; min-height: 40px; }
+.chip:hover { border-color: var(--accent); color: var(--accent); }
+.chip:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.items { display: grid; gap: 10px; }
+.item { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1.3fr) auto auto; gap: 10px; align-items: end; padding: 12px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.item.sold { background: var(--good-soft); border-color: transparent; }
+.item .x { border: 0; background: transparent; color: var(--muted); font-size: 22px; width: 40px; height: 44px; cursor: pointer; border-radius: 10px; }
+.item .x:hover { background: var(--warn-soft); color: var(--warn); }
+.item .tip { grid-column: 1 / -1; margin: 0; font-size: 13px; color: var(--muted); }
+.check { display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; font-weight: 600; color: var(--ink-2); cursor: pointer; white-space: nowrap; }
+.check.wrapok { white-space: normal; }
+.check input { width: 20px; height: 20px; accent-color: var(--good); }
+.inp select.full { border-left: 0; flex: 1; padding: 10px 12px; font-size: 15px; }
+.where { width: 100%; border-collapse: collapse; font-size: 14px; }
+.where th, .where td { text-align: left; padding: 9px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.where thead th { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.where td:first-child { font-weight: 700; white-space: nowrap; }
+.rules { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 15px; }
+.verse { margin: 0; font-style: italic; color: var(--ink-2); border-left: 3px solid var(--accent); padding-left: 12px; }
+
 @media (max-width: 760px) {
+  .item { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  #sellTiles { grid-template-columns: minmax(0, 1fr) !important; }
+  .item .f-name, .item .f-where { grid-column: 1 / -1; }
+  .where td:first-child { white-space: normal; }
   .grid2, .grid4, .tiles { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .debt { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .debt .f-name { grid-column: 1 / -1; }
@@ -103,7 +130,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
 @media print {
   body { background: #fff; color: #000; font-size: 12px; }
   .top { background: #fff; }
-  .noprint, .x, .seg, #add { display: none !important; }
+  .noprint, .x, .seg, #add, .chips { display: none !important; }
   .step { border: 1px solid #bbb; break-inside: avoid; padding: 12px; }
   .inp { border: 0; min-height: 0; } .inp select { border: 0; }
 }
@@ -114,7 +141,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
   <div class="wrap">
     <div class="brand">F&amp;T Asesorías · Asesoría financiera para parejas</div>
     <h1>Plan para salir de deudas</h1>
-    <p class="intro">Para hacer la asesoría con la pareja: anoten juntos ingresos, gastos y deudas, miren el diagnóstico y elijan en qué orden pagarlas. Los números de ejemplo ya están puestos; cámbienlos por los suyos. Nada se guarda ni se envía. Para el crédito de vivienda usa el <a href="./">simulador “El peso de la deuda”</a>, y para el acompañamiento mensual, <a href="seguimiento.html">“Nuestro avance”</a>.</p>
+    <p class="intro">Para hacer la asesoría con la pareja: anoten juntos ingresos, gastos y deudas, miren el diagnóstico, hagan la lista de lo que pueden vender y elijan en qué orden pagarlas. Los números de ejemplo ya están puestos; cámbienlos por los suyos. Nada se guarda ni se envía. Para el crédito de vivienda usa el <a href="./">simulador “El peso de la deuda”</a>, y para el acompañamiento mensual, <a href="seguimiento.html">“Nuestro avance”</a>.</p>
   </div>
 </header>
 
@@ -160,8 +187,48 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
     </section>
 
     <!-- 4 -->
+    <section class="step" aria-labelledby="h4v">
+      <div class="step-head"><span class="num">4</span><div><h2 id="h4v">¿Qué tienen en casa?</h2><p>Lo que no usan también puede pagar deudas. Recorran la casa juntos y anoten lo que pueden vender.</p></div></div>
+      <p class="verse">“¿Qué tienes en casa?” Y ella dijo: “Tu sierva ninguna cosa tiene en casa, sino una vasija de aceite.” … “Ve y vende el aceite, y paga a tus acreedores.” — 2 Reyes 4:2, 7</p>
+      <div class="field noprint">
+        <span class="lbl">Ideas para buscar (toquen para agregar)</span>
+        <div class="chips" id="chips"></div>
+      </div>
+      <div class="items" id="items"></div>
+      <div class="row noprint"><button type="button" class="btn ghost" id="addItem">+ Agregar algo para vender</button></div>
+      <div class="tiles" style="grid-template-columns:repeat(3,minmax(0,1fr))" id="sellTiles">
+        <div class="tile"><span>Si venden todo</span><b id="vTotal"></b><small id="vCount"></small></div>
+        <div class="tile good"><span>Ya vendido</span><b id="vSold"></b><small id="vSoldS"></small></div>
+        <div class="tile good"><span>Gracias a la venta</span><b id="vGain"></b><small id="vGainS"></small></div>
+      </div>
+      <label class="check wrapok noprint"><input type="checkbox" id="useSale" checked> Usar lo de la venta como abono único en el plan (paso 5)</label>
+      <div class="box">
+        <h3>Dónde venderlo</h3>
+        <div class="tablebox">
+          <table class="where">
+            <thead><tr><th>Plataforma</th><th>Sirve para</th><th>Bueno saber</th></tr></thead>
+            <tbody>
+              <tr><td>Facebook Marketplace</td><td>Muebles, electrodomésticos, cosas grandes, cosas del bebé</td><td>Venta en su ciudad, sin comisión. Publiquen también en los grupos de compraventa del municipio.</td></tr>
+              <tr><td>WhatsApp</td><td>Cualquier cosa</td><td>Estados y grupos de familia, trabajo o célula. Es lo más rápido para lo que conoce la gente cercana.</td></tr>
+              <tr><td>Mercado Libre</td><td>Celulares, tecnología, consolas, herramientas y cosas pequeñas</td><td>Llega a todo el país con envío. Cobra comisión por venta: súmela al precio.</td></tr>
+              <tr><td>TuCarro</td><td>Carro o moto</td><td>Si tienen un vehículo de más, es la venta que más mueve la deuda.</td></tr>
+              <tr><td>GoTrendier</td><td>Ropa, zapatos y accesorios</td><td>Fotos claras con talla y estado.</td></tr>
+              <tr><td>Decathlon Segunda Vida</td><td>Bicicletas y artículos deportivos</td><td>Pagan con bono de la tienda, no en efectivo: sirve solo si de todas formas iban a comprar allí.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ul class="rules">
+          <li><b>Precio:</b> busquen el mismo artículo usado en Marketplace o Mercado Libre y pongan un precio un poco por debajo para que salga rápido.</li>
+          <li><b>Seguridad:</b> entreguen en un lugar público o en la portería, y no entreguen hasta ver la plata en la cuenta. Una captura de pantalla no es un pago.</li>
+          <li><b>No empeñen:</b> la compraventa con pacto de retroventa es otra deuda con intereses altos.</li>
+          <li><b>Todo va a la deuda:</b> lo que entre por la venta se abona completo, no se gasta en el mes.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 5 -->
     <section class="step" aria-labelledby="h4s">
-      <div class="step-head"><span class="num">4</span><div><h2 id="h4s">El plan</h2><p>Se paga el mínimo de todas y el abono extra va a una sola. Cuando se termina, su cuota pasa a la siguiente.</p></div></div>
+      <div class="step-head"><span class="num">5</span><div><h2 id="h4s">El plan</h2><p>Se paga el mínimo de todas y el abono extra va a una sola. Cuando se termina, su cuota pasa a la siguiente.</p></div></div>
       <div class="grid2">
         <div class="field">
           <span class="lbl">Método</span>
@@ -182,6 +249,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
         <div class="tile good"><span>Terminan antes</span><b id="pAntes"></b><small>que pagando solo mínimos</small></div>
         <div class="tile good"><span>Se ahorran</span><b id="pAhorro"></b><small>en intereses</small></div>
       </div>
+      <p class="hint" id="saleHint"></p>
       <div>
         <p class="lbl" style="margin:0 0 10px">Orden para pagar</p>
         <ol class="order" id="order"></ol>
@@ -250,14 +318,60 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
     }).filter(d => d.s > 0);
   }
 
+  // ---------- Lo que no usan ----------
+  const PLAT = ['Facebook Marketplace', 'WhatsApp', 'Mercado Libre', 'TuCarro', 'GoTrendier', 'Decathlon Segunda Vida', 'Otro'];
+  const IDEAS = [
+    ['Ropa y zapatos', 'GoTrendier', 'Lo que no se han puesto en un año.'],
+    ['Celular o tablet anterior', 'Mercado Libre', 'Borren la información y restablézcanlo antes de venderlo.'],
+    ['Electrodoméstico que sobra', 'Facebook Marketplace', 'Pruébenlo y graben un video funcionando.'],
+    ['Mueble que no usan', 'Facebook Marketplace', 'Pongan medidas en la publicación.'],
+    ['Bicicleta o equipo de gimnasio', 'Facebook Marketplace', ''],
+    ['Herramientas', 'Mercado Libre', ''],
+    ['Cosas del bebé que ya no le sirven', 'Facebook Marketplace', 'Coche, cuna y ropa de bebé se venden rápido.'],
+    ['Consola y videojuegos', 'Mercado Libre', ''],
+    ['Carro o moto de más', 'TuCarro', 'Comparen con el valor de la tabla Fasecolda antes de poner precio.']
+  ];
+  $('chips').innerHTML = IDEAS.map((x, k) => '<button type="button" class="chip" data-k="' + k + '">+ ' + x[0] + '</button>').join('');
+  let iid = 0;
+  function addItem(it) {
+    it = it || { n: '', v: '', w: 'Facebook Marketplace', tip: '' };
+    const k = iid++;
+    const el = document.createElement('div');
+    el.className = 'item'; el.dataset.k = k;
+    el.innerHTML =
+      '<div class="field f-name"><label for="vn' + k + '">Qué es</label><div class="inp"><input id="vn' + k + '" class="np" value="' + esc(it.n) + '" placeholder="Ej.: Horno microondas"></div></div>' +
+      '<div class="field"><label for="vv' + k + '">Valor estimado</label><div class="inp"><span class="pre">$</span><input id="vv' + k + '" class="m" inputmode="numeric" value="' + dots(it.v) + '" placeholder="0"></div></div>' +
+      '<div class="field f-where"><label for="vw' + k + '">Dónde venderlo</label><div class="inp"><select id="vw' + k + '" class="full">' + PLAT.map(p => '<option' + (p === it.w ? ' selected' : '') + '>' + p + '</option>').join('') + '</select></div></div>' +
+      '<label class="check"><input type="checkbox" id="vs' + k + '"> Vendido</label>' +
+      '<button type="button" class="x" aria-label="Quitar">×</button>' +
+      (it.tip ? '<p class="tip">' + esc(it.tip) + '</p>' : '');
+    $('items').appendChild(el);
+    el.querySelector('.x').addEventListener('click', () => { el.remove(); update(); });
+    bind(el);
+    return el;
+  }
+  function readItems() {
+    const list = [...document.querySelectorAll('.item')].map(el => {
+      const k = el.dataset.k, sold = $('vs' + k).checked;
+      el.classList.toggle('sold', sold);
+      return { name: $('vn' + k).value.trim() || 'Sin nombre', v: digits($('vv' + k).value), where: $('vw' + k).value, sold };
+    }).filter(x => x.v > 0);
+    const total = list.reduce((a, x) => a + x.v, 0), sold = list.filter(x => x.sold), soldT = sold.reduce((a, x) => a + x.v, 0);
+    $('vTotal').textContent = fmt(total);
+    $('vCount').textContent = list.length + (list.length === 1 ? ' cosa' : ' cosas');
+    $('vSold').textContent = fmt(soldT);
+    $('vSoldS').textContent = total ? Math.round(soldT / total * 100) + ' % de la meta' : 'marquen lo que vayan vendiendo';
+    return { list, total };
+  }
+
   // ---------- Simulación ----------
   // order: lista de índices en el orden de ataque; extra: abono adicional; roll: si las cuotas liberadas pasan a la siguiente
-  function simulate(debts, order, extra, roll) {
+  function simulate(debts, order, extra, roll, lump) {
     const bal = debts.map(d => d.s), paidAt = debts.map(() => 0);
     let m = 0, tInt = 0, freed = 0;
     while (bal.some(b => b > 0.5) && m < 600) {
       m++;
-      let pool = extra + (roll ? freed : 0);
+      let pool = extra + (roll ? freed : 0) + (m === 1 ? (lump || 0) : 0);
       debts.forEach((d, j) => {
         if (bal[j] <= 0.5) return;
         const int = bal[j] * d.i; tInt += int; bal[j] += int;
@@ -306,11 +420,21 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
 
     const extra = digits($('extra').value);
     $('mHint').textContent = method === 'nieve' ? 'Primero la deuda más pequeña: victorias rápidas que dan ánimo.' : 'Primero la deuda con la tasa más alta: se pagan menos intereses.';
-    if (!debts.length) { $('order').innerHTML = '<li><span></span><span class="d">Agrega al menos una deuda con saldo.</span></li>'; $('cmp').innerHTML = ''; ['pTiempo', 'pAntes', 'pAhorro'].forEach(id => $(id).textContent = '—'); $('pFecha').textContent = ''; last = null; return; }
+    if (!debts.length) { readItems(); $('order').innerHTML = '<li><span></span><span class="d">Agrega al menos una deuda con saldo.</span></li>'; $('cmp').innerHTML = ''; ['pTiempo', 'pAntes', 'pAhorro'].forEach(id => $(id).textContent = '—'); $('pFecha').textContent = ''; last = null; return; }
     const base = simulate(debts, orderFor(debts, 'nieve'), 0, false);
-    const nieve = simulate(debts, orderFor(debts, 'nieve'), extra, true);
-    const aval = simulate(debts, orderFor(debts, 'avalancha'), extra, true);
+    const sale = readItems(), lump = $('useSale').checked ? sale.total : 0;
+    const nieve = simulate(debts, orderFor(debts, 'nieve'), extra, true, lump);
+    const aval = simulate(debts, orderFor(debts, 'avalancha'), extra, true, lump);
     const plan = method === 'nieve' ? nieve : aval, ord = orderFor(debts, method);
+    const sinVenta = simulate(debts, ord, extra, true, 0);
+    const gainM = sinVenta.months - plan.months, gainI = Math.max(0, sinVenta.interest - plan.interest);
+    if (sale.total > 0 && lump > 0 && !plan.stuck && !sinVenta.stuck) {
+      $('vGain').textContent = gainM > 0 ? tiempo(gainM) + ' antes' : fmt(gainI);
+      $('vGainS').textContent = gainM > 0 ? 'y ' + fmt(gainI) + ' menos en intereses' : 'menos en intereses';
+      $('saleHint').textContent = 'Incluye un abono único de ' + fmt(lump) + ' por la venta de lo que no usan, que va primero a ' + debts[ord[0]].name + '.';
+    } else {
+      $('vGain').textContent = '—'; $('vGainS').textContent = sale.total > 0 ? 'activen el abono en el plan' : 'anoten algo para vender'; $('saleHint').textContent = '';
+    }
     $('pTiempo').textContent = plan.stuck ? 'Más de 50 años' : tiempo(plan.months);
     $('pFecha').textContent = plan.stuck ? 'revisa las cuotas' : 'hacia ' + mesAno(plan.months);
     $('pAntes').textContent = base.stuck || plan.stuck ? '—' : (base.months - plan.months > 0 ? tiempo(base.months - plan.months) : '—');
@@ -322,17 +446,23 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
     }).join('');
     const row = (name, s, sel) => '<tr' + (sel ? ' class="sel"' : '') + '><td>' + name + '</td><td>' + (s.stuck ? '+600' : s.months) + '</td><td>' + fmt(s.interest) + '</td><td>' + fmt(s.total) + '</td></tr>';
     $('cmp').innerHTML = row('Solo mínimos', base, false) + row('Bola de nieve', nieve, method === 'nieve') + row('Avalancha', aval, method === 'avalancha');
-    last = { ing, gas, cuotas, deuda, carga, libre, extra, debts, ord, plan, base };
+    last = { ing, gas, cuotas, deuda, carga, libre, extra, debts, ord, plan, base, sale, lump, gainM };
     const t = resumen(); $('wa').href = 'https://wa.me/?text=' + encodeURIComponent(t);
   }
 
   function resumen() {
     if (!last) return '';
-    const { ing, gas, cuotas, deuda, carga, libre, extra, debts, ord, plan, base } = last;
+    const { ing, gas, cuotas, deuda, carga, libre, extra, debts, ord, plan, base, sale, lump, gainM } = last;
     const L = ['PLAN PARA SALIR DE DEUDAS', '',
       'Ingresos: ' + fmt(ing) + ' · Gastos: ' + fmt(gas) + ' · Cuotas: ' + fmt(cuotas),
       'Deuda total: ' + fmt(deuda) + ' · Carga: ' + Math.round(carga * 100) + ' % · Libre: ' + fmt(libre), '',
-      'Método: ' + (method === 'nieve' ? 'bola de nieve' : 'avalancha') + ' · Abono extra: ' + fmt(extra) + ' al mes', '', 'Orden para pagar:'];
+      'Método: ' + (method === 'nieve' ? 'bola de nieve' : 'avalancha') + ' · Abono extra: ' + fmt(extra) + ' al mes'];
+    if (sale.list.length) {
+      L.push('', 'Para vender (' + fmt(sale.total) + '):');
+      sale.list.forEach(it => L.push('- ' + it.name + ': ' + fmt(it.v) + ' en ' + it.where + (it.sold ? ' (vendido)' : '')));
+      if (lump) L.push('Abono único con la venta: ' + fmt(lump) + (gainM > 0 ? ' → salen ' + tiempo(gainM) + ' antes' : '') + '.');
+    }
+    L.push('', 'Orden para pagar:');
     ord.forEach((j, n) => L.push((n + 1) + '. ' + debts[j].name + ' (' + fmt(debts[j].s) + ') → pagada ' + (plan.paidAt[j] ? 'en ' + mesAno(plan.paidAt[j]) : '—')));
     L.push('', 'Libres de deudas en ' + tiempo(plan.months) + (base.months > plan.months ? ', ' + tiempo(base.months - plan.months) + ' antes que con solo mínimos' : '') + '.');
     L.push('Ahorro en intereses: ' + fmt(Math.max(0, base.interest - plan.interest)) + '.', '', '“Paga a tus acreedores, y tú y tus hijos vivid de lo que quede.” 2 Reyes 4:7');
@@ -347,6 +477,12 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
   }
   bind(document);
   EJ.forEach(addDebt);
+  [{ n: 'Bicicleta estática', v: 350000, w: 'Facebook Marketplace', tip: '' }, { n: 'Celular anterior', v: 250000, w: 'Mercado Libre', tip: 'Borren la información y restablézcanlo antes de venderlo.' }, { n: 'Ropa que ya no usan', v: 150000, w: 'GoTrendier', tip: '' }].forEach(addItem);
+  document.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => {
+    const x = IDEAS[b.dataset.k], el = addItem({ n: x[0], v: '', w: x[1], tip: x[2] });
+    el.querySelector('.m').focus(); update();
+  }));
+  $('addItem').addEventListener('click', () => { addItem().querySelector('input').focus(); update(); });
   $('add').addEventListener('click', () => { addDebt(); const els = document.querySelectorAll('.debt'); els[els.length - 1].querySelector('input').focus(); });
   document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
     method = b.dataset.m; document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); update();
