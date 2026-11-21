@@ -124,6 +124,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
   .debt .f-name { grid-column: 1 / -1; }
   #gastos { grid-template-columns: minmax(0, 1fr); }
   .tiles.plan { grid-template-columns: minmax(0, 1fr) !important; }
+  #g6 { grid-template-columns: minmax(0, 1fr); }
   .compare th, .compare td { padding: 8px 4px; font-size: 13px; }
   .step { padding: 16px; }
 }
@@ -150,6 +151,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
     <!-- 1 -->
     <section class="step" aria-labelledby="h1s">
       <div class="step-head"><span class="num">1</span><div><h2 id="h1s">Ingresos y gastos del mes</h2><p>De los dos: lo que entra a la casa entre ambos.</p></div></div>
+      <div class="field" style="max-width:420px"><label for="pareja">Nombre de la pareja</label><div class="inp"><input id="pareja" class="np" placeholder="Ej.: Andrés y Paola"></div></div>
       <div class="grid2">
         <div class="box">
           <h3>Ingresos</h3>
@@ -268,6 +270,33 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
       </div>
       <p class="status" id="status" aria-live="polite"></p>
       <p class="note">Proyección con tasas y cuotas fijas; no incluye seguros, intereses de mora ni nuevas compras. Las fechas son aproximadas, contando desde este mes.</p>
+    </section>
+
+    <!-- 6 -->
+    <section class="step" aria-labelledby="h6s">
+      <div class="step-head"><span class="num">6</span><div><h2 id="h6s">Compromisos y acompañamiento</h2><p>Tres compromisos escritos y la fecha del primer encuentro. Luego, el plan se va con ellos al celular.</p></div></div>
+      <div class="grid2" id="g6">
+        <div class="box">
+          <h3>Nuestros compromisos</h3>
+          <div id="comps" style="display:grid;gap:8px"></div>
+          <div class="row noprint"><button type="button" class="btn ghost" id="addComp" style="min-height:40px;padding:8px 12px;font-size:14px">+ Otro compromiso</button></div>
+        </div>
+        <div class="box">
+          <h3>Primer encuentro (arranque)</h3>
+          <div class="field"><label for="cita">Fecha</label><div class="inp"><input id="cita" class="np" type="date"></div></div>
+          <p class="hint">La guía sugiere 2 semanas después de la asesoría.</p>
+        </div>
+      </div>
+      <div class="box noprint" style="background:var(--accent-soft)">
+        <h3>Llevar a “Nuestro avance”</h3>
+        <p class="hint" style="font-size:14px;color:var(--ink-2)">Envíenle este link a la pareja. Al abrirlo en su celular, quedan anotadas sus deudas, los compromisos, lo que van a vender y la fecha del encuentro. No tienen que escribir nada otra vez.</p>
+        <div class="row">
+          <a class="btn" id="sendLink" href="https://wa.me/" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center">Enviar a la pareja por WhatsApp</a>
+          <button type="button" class="btn ghost" id="copyLink">Copiar link</button>
+          <a class="btn ghost" id="openLink" href="seguimiento.html" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center">Abrir aquí</a>
+        </div>
+        <p class="status" id="linkStatus" aria-live="polite"></p>
+      </div>
     </section>
   </div>
 </main>
@@ -449,6 +478,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
     $('cmp').innerHTML = row('Solo mínimos', base, false) + row('Bola de nieve', nieve, method === 'nieve') + row('Avalancha', aval, method === 'avalancha');
     last = { ing, gas, cuotas, deuda, carga, libre, extra, debts, ord, plan, base, sale, lump, gainM };
     const t = resumen(); $('wa').href = 'https://wa.me/?text=' + encodeURIComponent(t);
+    updLink();
   }
 
   function resumen() {
@@ -469,6 +499,37 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
     L.push('Ahorro en intereses: ' + fmt(Math.max(0, base.interest - plan.interest)) + '.', '', '“Paga a tus acreedores, y tú y tus hijos vivid de lo que quede.” 2 Reyes 4:7');
     return L.join('\n');
   }
+
+  // ---------- Compromisos y link a Nuestro avance ----------
+  const COMP0 = ['No usar la tarjeta de crédito mientras pagamos', 'Abonar el extra a la primera deuda desde el próximo pago', 'Revisar el presupuesto juntos cada semana'];
+  function addComp(t) {
+    const el = document.createElement('div'); el.className = 'inp';
+    el.innerHTML = '<input class="np cm" value="' + esc(t || '') + '" placeholder="Compromiso" aria-label="Compromiso">';
+    $('comps').appendChild(el); bind(el); return el;
+  }
+  COMP0.forEach(addComp);
+  $('addComp').addEventListener('click', () => { addComp().querySelector('input').focus(); });
+  (function () { const d = new Date(); d.setDate(d.getDate() + 14); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); $('cita').value = d.toISOString().slice(0, 10); })();
+  const b64 = str => btoa(unescape(encodeURIComponent(str))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  function planLink() {
+    const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    const debts = readDebts().map(x => ({ n: x.name, ini: Math.round(x.s) }));
+    const ventas = readItems().list.map(x => ({ n: x.name, v: x.v, w: x.where, sold: x.sold, real: x.sold ? x.v : 0 }));
+    const checks = [...document.querySelectorAll('.cm')].map(i => i.value.trim()).filter(Boolean).map(t => ({ t, ok: false }));
+    const data = { v: 1, pareja: $('pareja').value.trim(), inicio: d.toISOString().slice(0, 10), cita: $('cita').value || '', debts, ventas, checks };
+    let base; try { base = new URL('seguimiento.html', location.href).href.split('#')[0]; } catch (e) { base = 'https://fredyhenaodev.github.io/el-peso-de-la-deuda/seguimiento.html'; }
+    if (!/^https?:/.test(base)) base = 'https://fredyhenaodev.github.io/el-peso-de-la-deuda/seguimiento.html';
+    return base + '#plan=' + b64(JSON.stringify(data));
+  }
+  function updLink() {
+    const url = planLink(), nom = $('pareja').value.trim();
+    $('openLink').href = url;
+    $('sendLink').href = 'https://wa.me/?text=' + encodeURIComponent('Hola' + (nom ? ', ' + nom : '') + '. Aquí está su plan para salir de deudas. Ábranlo en el celular y guárdenlo: ahí van a anotar su avance cada mes.\n\n' + url + '\n\n“Ve y vende el aceite, y paga a tus acreedores.” 2 Reyes 4:7\n— F&T Asesorías');
+  }
+  $('copyLink').addEventListener('click', () => {
+    const url = planLink();
+    try { navigator.clipboard.writeText(url).then(() => { $('linkStatus').textContent = 'Link copiado.'; }, () => { $('linkStatus').textContent = url; }); } catch (e) { $('linkStatus').textContent = url; }
+  });
 
   function bind(root) {
     root.querySelectorAll('input, select').forEach(el => {

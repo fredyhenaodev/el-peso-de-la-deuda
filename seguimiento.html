@@ -205,6 +205,52 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
 @keyframes fall { to { transform: translateY(105vh) rotate(720deg); } }
 @media (prefers-reduced-motion: reduce) { .confetti { display: none; } .ring .val, .bigbar i { transition: none; } .badge.new .md { animation: none; } }
 
+/* Plata extra */
+.alert { margin: 0; background: var(--gold-soft); border-left: 4px solid var(--gold); border-radius: 12px; padding: 12px 14px; font-weight: 600; }
+.extras { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.extra { border: 1px solid var(--line); border-radius: 16px; padding: 12px 14px; display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 4px 12px; }
+.extra.ok { background: var(--good-soft); border-color: transparent; }
+.extra .cal { grid-row: span 2; width: 58px; height: 62px; border-radius: 12px; background: var(--accent); color: var(--accent-ink); display: grid; place-content: center; text-align: center; line-height: 1.05; }
+.extra .cal b { font-size: 22px; } .extra .cal span { font-size: 11px; text-transform: uppercase; font-weight: 700; letter-spacing: .05em; }
+.extra.ok .cal { background: var(--good); }
+.extra .t { font-weight: 700; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.extra .t small { color: var(--accent); font-weight: 700; }
+.extra .d { font-size: 13px; color: var(--muted); }
+.extra .act { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 6px; }
+.extra .act .inp { min-height: 42px; flex: 1; min-width: 170px; max-width: 260px; }
+.extra .act .inp input { font-size: 15px; padding-block: 9px; }
+.extra .act label { display: flex; align-items: center; gap: 8px; font-weight: 700; cursor: pointer; min-height: 40px; }
+.extra .act label input { width: 24px; height: 24px; accent-color: var(--good); }
+
+/* Certificado */
+.cert-wrap { position: fixed; inset: 0; z-index: 60; background: rgba(30, 23, 18, .72); overflow: auto; padding: 20px 12px 40px; display: grid; justify-items: center; align-content: start; gap: 14px; }
+.cert { width: min(980px, 100%); background: #FBF6EE; color: #3A2A1F; border-radius: 6px; padding: clamp(14px, 3vw, 28px); box-shadow: 0 20px 60px rgba(0, 0, 0, .35); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.cert .frame { border: 3px double #8B5E3C; outline: 1px solid #C9A87E; outline-offset: -10px; padding: clamp(20px, 5vw, 48px) clamp(16px, 5vw, 56px); text-align: center; display: grid; gap: clamp(8px, 1.6vw, 14px); position: relative; background: radial-gradient(circle at 50% 0%, #F3E6D2 0%, rgba(243, 230, 210, 0) 60%); }
+.cert .br { font-family: var(--f-display); letter-spacing: .3em; text-transform: uppercase; color: #8B5E3C; font-size: clamp(12px, 1.6vw, 15px); }
+.cert .kick { font-size: clamp(12px, 1.5vw, 14px); letter-spacing: .14em; text-transform: uppercase; color: #7A6553; font-weight: 700; }
+.cert h2 { font-family: var(--f-display); font-weight: 600; text-transform: uppercase; color: #5A3B25; font-size: clamp(30px, 6.4vw, 60px); line-height: 1; margin: 0; }
+.cert .who { font-size: clamp(22px, 4vw, 38px); font-weight: 800; color: #3A2A1F; border-bottom: 2px solid #C9A87E; justify-self: center; padding: 0 18px 4px; }
+.cert .why { font-size: clamp(14px, 1.9vw, 18px); max-width: 60ch; justify-self: center; margin: 0; color: #5C4636; }
+.cert .nums { display: flex; flex-wrap: wrap; justify-content: center; gap: clamp(10px, 3vw, 36px); margin: 4px 0; }
+.cert .nums div { display: grid; }
+.cert .nums b { font-family: var(--f-display); font-size: clamp(22px, 3.6vw, 34px); color: #8B5E3C; font-weight: 600; line-height: 1.1; }
+.cert .nums span { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: #7A6553; font-weight: 600; }
+.cert .vs { font-style: italic; color: #5C4636; margin: 0; font-size: clamp(13px, 1.7vw, 16px); }
+.cert .vs cite { font-style: normal; font-weight: 700; color: #8B5E3C; }
+.cert .sign { display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: end; margin-top: clamp(10px, 3vw, 26px); }
+.cert .sign div { border-top: 1.5px solid #7A6553; padding-top: 6px; font-size: 13px; color: #5C4636; font-weight: 600; }
+.cert .seal { width: clamp(64px, 10vw, 92px); height: clamp(64px, 10vw, 92px); border-radius: 50%; background: radial-gradient(circle at 35% 30%, #F4D58D, #B8862F 70%); color: #3A2A1F; display: grid; place-content: center; font-family: var(--f-display); font-size: clamp(16px, 2.6vw, 24px); font-weight: 600; box-shadow: 0 0 0 4px #FBF6EE, 0 0 0 6px #B8862F; }
+.cert .fecha { font-size: 13px; color: #7A6553; }
+@media print {
+  @page { size: letter landscape; margin: 10mm; }
+  body.pc { background: #fff; padding: 0; }
+  body.pc > *:not(#certWrap) { display: none !important; }
+  body.pc #certWrap { position: static; background: none; padding: 0; overflow: visible; display: block; }
+  body.pc #certWrap .noprint { display: none !important; }
+  body.pc .cert { box-shadow: none; width: 100%; border-radius: 0; padding: 0; }
+  body.pc .cert .frame { min-height: calc(8.5in - 22mm); align-content: center; }
+}
+
 @media (max-width: 560px) {
   .sell { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; }
   .sell .f-n { grid-column: 1 / 3; grid-row: 1; }
@@ -237,6 +283,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
 <main>
   <div class="wrap">
     <div class="demo" id="demoBar" hidden><span>Están viendo un ejemplo. Nada de esto se guarda.</span><button type="button" class="btn small" id="demoOut">Empezar el nuestro</button></div>
+    <div class="demo" id="importBar" hidden><span id="importTxt">Llegó un plan de F&amp;T Asesorías. Si lo cargan, reemplaza lo que ya tienen anotado en este celular.</span><div class="row"><button type="button" class="btn small" id="importYes">Cargar el plan</button><button type="button" class="btn ghost small" id="importNo">No</button></div></div>
 
     <!-- Bienvenida -->
     <section class="welcome" id="welcome" aria-labelledby="h-w">
@@ -296,6 +343,14 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
       <div class="badges" id="badges"></div>
     </section>
 
+    <!-- Plata extra -->
+    <section class="card" id="extraCard" aria-labelledby="h-x" hidden>
+      <div class="head"><h2 id="h-x">Plata extra que viene</h2><small id="nExtra"></small></div>
+      <p class="alert" id="extraAlert" hidden></p>
+      <ul class="extras" id="extras"></ul>
+      <p class="note">Aplica si trabajan con contrato laboral. Decidan antes de que llegue cuánto va a la deuda: la plata que llega sin plan se gasta sola.</p>
+    </section>
+
     <!-- Ruta -->
     <section class="card" id="rutaCard" aria-labelledby="h-r" hidden>
       <div class="head"><h2 id="h-r">Nuestra ruta</h2><small id="nEnc"></small></div>
@@ -305,6 +360,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
       </div>
       <ol class="enc" id="enc"></ol>
       <p class="note">Toquen el círculo cuando tengan cada encuentro.</p>
+      <div class="row"><button type="button" class="btn ghost" id="certOpen">🏅 Ver certificado del cierre</button></div>
     </section>
 
     <!-- Compromisos -->
@@ -386,6 +442,12 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
   </div>
 </main>
 
+<div class="cert-wrap" id="certWrap" hidden role="dialog" aria-modal="true" aria-label="Certificado">
+  <div class="cert"><div class="frame" id="certBody"></div></div>
+  <div class="row noprint"><button type="button" class="btn light" id="certPrint">Imprimir</button><button type="button" class="btn ghost" id="certClose" style="color:#FFF8EE;border-color:#EBD9C3">Cerrar</button></div>
+  <p class="noprint" style="margin:0;color:#EBD9C3;font-size:13px;text-align:center;max-width:52ch">Al imprimir, elijan papel carta y orientación horizontal. También pueden guardarlo como PDF.</p>
+</div>
+
 <nav class="dock" id="dock" hidden aria-label="Acciones">
   <div class="in">
     <a class="btn" href="#mesCard" id="dockAnotar">+ Anotar este mes</a>
@@ -411,7 +473,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
   const monthsBetween = (a, b) => (b.getFullYear() - a.getFullYear()) * 12 + (b.getMonth() - a.getMonth()) + (b.getDate() - a.getDate()) / 30;
   const sh = v => v >= 1e6 ? '$' + (v / 1e6).toLocaleString('es-CO', { maximumFractionDigits: 1 }) + ' M' : '$' + Math.round(v / 1e3) + ' mil';
 
-  const BLANK = () => ({ pareja: '', inicio: '', debts: [], entries: [], checks: [{ t: '', ok: false }, { t: '', ok: false }, { t: '', ok: false }], cita: '', enc: [false, false, false, false, false], seen: [], ventas: [] });
+  const BLANK = () => ({ pareja: '', inicio: '', debts: [], entries: [], checks: [{ t: '', ok: false }, { t: '', ok: false }, { t: '', ok: false }], cita: '', enc: [false, false, false, false, false], seen: [], ventas: [], extras: {} });
   let S = BLANK(), demo = false, saved = null;
   function load() { try { const v = JSON.parse(localStorage.getItem(KEY)); if (v && Array.isArray(v.debts)) S = Object.assign(BLANK(), v); } catch (e) {} }
   function store() { if (demo) return; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
@@ -586,6 +648,78 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
     $('wa').href = 'https://wa.me/?text=' + encodeURIComponent(resumen());
   }
 
+  // ---------- Plata extra (primas y cesantías) ----------
+  const EXTRAS = [
+    { id: 'pdic', m: 11, d: 20, t: 'Prima de diciembre', a: 'Viene la prima de diciembre', x: 'Se paga a más tardar el 20 de diciembre: 15 días de salario por el semestre.' },
+    { id: 'icz', m: 0, d: 31, t: 'Intereses de cesantías', a: 'Vienen los intereses de cesantías', x: 'Llegan a la cuenta a más tardar el 31 de enero. Son plata libre: pueden ir completos a la deuda.' },
+    { id: 'ces', m: 1, d: 14, t: 'Cesantías', a: 'Vienen las cesantías', x: 'Se consignan al fondo antes del 14 de febrero. Solo se retiran para vivienda o estudio: sirven para abonar al crédito de vivienda, no a tarjetas.' },
+    { id: 'pjun', m: 5, d: 30, t: 'Prima de junio', a: 'Viene la prima de junio', x: 'Se paga a más tardar el 30 de junio.' }
+  ];
+  const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  function proximos() {
+    const hoy = pd(today());
+    return EXTRAS.map(e => { let y = hoy.getFullYear(), dt = new Date(y, e.m, e.d); if (dt < hoy) dt = new Date(++y, e.m, e.d); return Object.assign({ key: e.id + y, date: dt, dias: Math.round((dt - hoy) / 864e5) }, e); }).sort((a, b) => a.date - b.date);
+  }
+  function renderExtras() {
+    if (!S.extras || typeof S.extras !== 'object') S.extras = {};
+    const L = proximos();
+    $('extras').innerHTML = L.map((e, i) => {
+      const st = S.extras[e.key] || {};
+      return '<li class="extra' + (st.ok ? ' ok' : '') + '"><div class="cal"><b>' + e.date.getDate() + '</b><span>' + MESES[e.m] + '</span></div>' +
+        '<div class="t"><span>' + e.t + '</span><small>' + (st.ok ? '¡Abonado!' : e.dias === 0 ? 'Hoy' : 'en ' + e.dias + ' días') + '</small></div><div class="d">' + e.x + '</div>' +
+        '<div class="act"><div class="inp"><span class="pre">Abonar $</span><input inputmode="numeric" data-k="' + e.key + '" class="xp" aria-label="Cuánto van a abonar de ' + e.t + '" value="' + dots(st.p || 0) + '" placeholder="0"></div>' +
+        '<label><input type="checkbox" class="xo" data-k="' + e.key + '"' + (st.ok ? ' checked' : '') + '> Ya lo abonamos</label></div></li>';
+    }).join('');
+    $('extras').querySelectorAll('.xp').forEach(inp => {
+      inp.addEventListener('input', () => { const k = inp.dataset.k; S.extras[k] = Object.assign(S.extras[k] || {}, { p: digits(inp.value) }); store(); extraTotals(); });
+      inp.addEventListener('blur', () => { inp.value = dots(digits(inp.value)); });
+    });
+    $('extras').querySelectorAll('.xo').forEach(cb => cb.addEventListener('change', () => {
+      const k = cb.dataset.k; S.extras[k] = Object.assign(S.extras[k] || {}, { ok: cb.checked }); store(); renderExtras();
+      if (cb.checked) { confetti(60); flash('¡Abonaron la plata extra! Así se acorta el camino.'); }
+    }));
+    const n = L[0], st = S.extras[n.key] || {};
+    $('extraAlert').hidden = !(n.dias <= 45 && !st.ok);
+    if (n.dias <= 45 && !st.ok) $('extraAlert').textContent = '¡' + n.a + '! ' + (n.dias === 0 ? 'Es hoy.' : 'Faltan ' + n.dias + ' días.') + (st.p ? ' Acordaron abonar ' + fmt(st.p) + '.' : ' Decidan ya cuánto va a la deuda.');
+    extraTotals();
+  }
+  function extraTotals() {
+    const ab = Object.values(S.extras || {}).filter(x => x.ok).reduce((a, x) => a + (x.p || 0), 0);
+    $('nExtra').textContent = ab ? fmt(ab) + ' abonados' : '';
+  }
+
+  // ---------- Certificado ----------
+  function certHTML() {
+    const ini = iniTotal(), cur = current(), hoy = tot(cur), pagado = Math.max(0, ini - hoy);
+    const pct = ini ? Math.round(pagado / ini * 100) : 0, libres = ini > 0 && hoy <= 0;
+    const terminadas = S.debts.filter((d, j) => d.ini > 0 && (cur[j] || 0) <= 0).length;
+    const fin = S.entries.length ? pd(S.entries[S.entries.length - 1].f) : new Date();
+    const meses = Math.max(1, Math.round(monthsBetween(startDate(), fin)));
+    const vend = S.ventas.filter(x => x.sold).reduce((a, x) => a + (x.real || x.v), 0);
+    const fechaHoy = new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
+    const nums = [[libres ? fmt(ini) : pct + ' %', libres ? 'pagados' : 'de la deuda pagada'], [fmt(pagado), 'abonados'], [terminadas + ' de ' + S.debts.length, 'deudas terminadas'], [meses + (meses === 1 ? ' mes' : ' meses'), 'de esfuerzo']];
+    if (vend) nums.splice(3, 0, [fmt(vend), 'en ventas']);
+    return '<div class="br">F&amp;T Asesorías</div>' +
+      '<div class="kick">' + (libres ? 'Certificado de libertad financiera' : 'Reconocimiento de avance') + '</div>' +
+      '<h2>' + (libres ? '¡Libres de deudas!' : 'Fieles en el plan') + '</h2>' +
+      '<p class="why" style="margin-top:6px">Se otorga a</p>' +
+      '<div class="who">' + esc(S.pareja || 'Nuestra pareja') + '</div>' +
+      '<p class="why">' + (libres
+        ? 'por pagar todas sus deudas, trabajando juntos y con fidelidad, durante ' + meses + (meses === 1 ? ' mes' : ' meses') + ' de acompañamiento.'
+        : 'por su constancia en el plan para salir de deudas: en ' + meses + (meses === 1 ? ' mes' : ' meses') + ' abonaron ' + fmt(pagado) + (terminadas ? ' y terminaron ' + terminadas + (terminadas === 1 ? ' deuda' : ' deudas') : '') + '. El camino sigue, y ya demostraron que pueden.') + '</p>' +
+      '<div class="nums">' + nums.map(n => '<div><b>' + n[0] + '</b><span>' + n[1] + '</span></div>').join('') + '</div>' +
+      '<p class="vs">“Ve y vende el aceite, y paga a tus acreedores, y tú y tus hijos vivid de lo que quede.” <cite>2 Reyes 4:7</cite></p>' +
+      '<div class="sign"><div>F&amp;T Asesorías</div><span class="seal">F&amp;T</span><div>' + esc(S.pareja || 'La pareja') + '</div></div>' +
+      '<div class="fecha">' + fechaHoy + '</div>';
+  }
+  $('certOpen').addEventListener('click', () => { $('certBody').innerHTML = certHTML(); $('certWrap').hidden = false; document.body.style.overflow = 'hidden'; $('certPrint').focus(); });
+  function certClose() { $('certWrap').hidden = true; document.body.style.overflow = ''; $('certOpen').focus(); }
+  $('certClose').addEventListener('click', certClose);
+  $('certWrap').addEventListener('click', e => { if (e.target === $('certWrap')) certClose(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('certWrap').hidden) certClose(); });
+  $('certPrint').addEventListener('click', () => { document.body.classList.add('pc'); try { window.print(); } catch (e) {} setTimeout(() => document.body.classList.remove('pc'), 500); });
+  window.addEventListener('afterprint', () => document.body.classList.remove('pc'));
+
   // ---------- Ruta ----------
   function renderRuta() {
     const next = S.enc.indexOf(false);
@@ -605,7 +739,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
   function render(animate) {
     const has = S.debts.length > 0;
     $('welcome').hidden = has;
-    ['hero', 'debtsCard', 'badgesCard', 'rutaCard', 'compCard', 'sellCard', 'mesCard', 'histCard', 'dock'].forEach(id => $(id).hidden = !has);
+    ['hero', 'debtsCard', 'badgesCard', 'extraCard', 'rutaCard', 'compCard', 'sellCard', 'mesCard', 'histCard', 'dock'].forEach(id => $(id).hidden = !has);
     $('demoBar').hidden = !demo;
     $('hello').hidden = !S.pareja; $('hello').textContent = S.pareja ? 'Hola, ' + S.pareja : '';
     const mes = has ? Math.max(1, Math.floor(monthsBetween(startDate(), new Date())) + 1) : 0;
@@ -673,6 +807,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
     if (nuevos.length) { S.seen = S.seen.concat(nuevos); store(); }
 
     renderRuta();
+    renderExtras();
     renderHist();
     $('wa').href = 'https://wa.me/?text=' + encodeURIComponent(resumen());
     $('backup').value = JSON.stringify(S);
@@ -718,6 +853,8 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
       L.push('', 'Lo que no usamos y vamos a vender (vendido ' + fmt(vend) + '):');
       S.ventas.forEach(x => L.push((x.sold ? '✔ ' : '○ ') + (x.n || 'Sin nombre') + ' · ' + (x.sold ? 'vendido en ' + fmt(x.real || x.v) : fmt(x.v) + ' en ' + x.w)));
     }
+    const abx = Object.values(S.extras || {}).filter(x => x.ok).reduce((a, x) => a + (x.p || 0), 0);
+    if (abx) L.push('', 'Primas y cesantías abonadas: ' + fmt(abx));
     L.push('', 'Encuentros: ' + S.enc.filter(Boolean).length + ' de 5');
     return L.join('\n');
   }
@@ -759,11 +896,42 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
   $('resetYes').addEventListener('click', () => { if (demo) { $('demoOut').click(); return; } try { localStorage.removeItem(KEY); } catch (e) {} location.reload(); });
   $('dockAnotar').addEventListener('click', () => setTimeout(() => { const f = $('m0'); if (f) f.focus({ preventScroll: true }); }, 500));
 
+  // ---------- Plan que llega desde la asesoría ----------
+  function readPlan() {
+    const m = location.hash.match(/plan=([\w-]+)/); if (!m) return null;
+    try {
+      let b = m[1].replace(/-/g, '+').replace(/_/g, '/'); while (b.length % 4) b += '=';
+      const v = JSON.parse(decodeURIComponent(escape(atob(b))));
+      return v && Array.isArray(v.debts) ? v : null;
+    } catch (e) { return null; }
+  }
+  function clearHash() { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { location.hash = ''; } }
+  function applyPlan(v) {
+    const checks = (v.checks || []).filter(c => c && c.t).map(c => ({ t: String(c.t), ok: false }));
+    S = Object.assign(BLANK(), {
+      pareja: String(v.pareja || ''), inicio: v.inicio || today(), cita: v.cita || '',
+      debts: v.debts.map(d => ({ n: String(d.n || 'Deuda'), ini: Number(d.ini) || 0 })).filter(d => d.ini > 0),
+      ventas: (v.ventas || []).map(x => ({ n: String(x.n || ''), v: Number(x.v) || 0, w: String(x.w || 'Facebook Marketplace'), sold: !!x.sold, real: Number(x.real) || 0 })),
+      checks: checks.length ? checks : BLANK().checks
+    });
+    store(); clearHash(); $('importBar').hidden = true;
+    renderSetup(); renderChecks(); renderSells(); render();
+    window.scrollTo(0, 0); flash('¡Bienvenidos! Su plan quedó guardado en este celular.'); confetti(90);
+  }
+  const incoming = readPlan();
+
   load();
   if (!Array.isArray(S.enc) || S.enc.length !== 5) S.enc = [false, false, false, false, false];
   if (!Array.isArray(S.ventas)) S.ventas = [];
   $('fecha').value = today();
   renderSetup(); renderChecks(); renderSells(); render();
+  if (incoming) {
+    if (S.debts.length) {
+      $('importBar').hidden = false;
+      $('importYes').addEventListener('click', () => applyPlan(incoming));
+      $('importNo').addEventListener('click', () => { $('importBar').hidden = true; clearHash(); });
+    } else applyPlan(incoming);
+  } else if (/plan=/.test(location.hash)) { clearHash(); }
 })();
 </script>
 </body>
