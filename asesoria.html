@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Plan para salir de deudas</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: una columna guiada (1 ingresos y gastos → 2 deudas → 3 diagnóstico → 4 plan), mismo lenguaje visual que el simulador */
+:root {
+  --bg: #F6F9FC; --surface: #FFFFFF; --sky: #E3EFFC; --sky-2: #F0F6FD;
+  --ink: #1A2A3F; --ink-2: #3D4F66; --muted: #637389; --line: #DCE5EF;
+  --accent: #2E6BC6; --accent-ink: #FFFFFF; --accent-soft: #EAF2FC;
+  --good: #1F7A55; --good-soft: #E6F4EE; --warn: #B4531A; --warn-soft: #FFF1E6;
+  --f-display: 'Oswald', 'Arial Narrow', Arial, sans-serif;
+  --f-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #101826; --surface: #172235; --sky: #1B2A41; --sky-2: #1A2638; --ink: #EAF0F7; --ink-2: #C8D3E1; --muted: #98A6BA; --line: #2A3A52;
+    --accent: #8FBDF2; --accent-ink: #0F1A29; --accent-soft: #1E3150; --good: #6FD0A4; --good-soft: #17332A; --warn: #F2A66B; --warn-soft: #3A2A1A; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-ui); font-size: 16px; line-height: 1.5; }
+[hidden] { display: none !important; }
+.wrap { max-width: 960px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.top { background: linear-gradient(180deg, var(--sky) 0%, var(--bg) 100%); }
+.top .wrap { padding-block: 28px 16px; display: grid; gap: 10px; }
+.brand { font-family: var(--f-display); font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+h1 { font-family: var(--f-display); font-weight: 600; font-size: clamp(34px, 6vw, 56px); line-height: 1; text-transform: uppercase; margin: 0; text-wrap: balance; }
+.intro { margin: 0; color: var(--ink-2); max-width: 62ch; }
+.intro a { color: var(--accent); }
+main .wrap { padding-block: 12px 48px; display: grid; gap: 20px; }
+.step { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px; display: grid; gap: 16px; }
+.step-head { display: flex; gap: 14px; align-items: flex-start; }
+.num { flex: none; width: 34px; height: 34px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-weight: 800; }
+.step-head h2 { font-size: 21px; margin: 3px 0 2px; line-height: 1.25; }
+.step-head p { margin: 0; color: var(--muted); font-size: 15px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 24px; }
+.grid4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.field { display: grid; gap: 5px; align-content: start; }
+label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
+.hint { font-size: 13px; color: var(--muted); margin: 0; }
+.inp { display: flex; align-items: center; border: 1.5px solid var(--line); border-radius: 10px; background: var(--surface); overflow: hidden; min-height: 44px; }
+.inp:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.inp .pre, .inp .suf { padding: 0 10px; color: var(--muted); font-weight: 600; white-space: nowrap; font-size: 14px; }
+.inp input, .inp select { flex: 1; min-width: 0; border: 0; background: transparent; color: var(--ink); font: 600 16px/1 var(--f-ui); padding: 10px 10px 10px 0; font-variant-numeric: tabular-nums; outline: none; }
+.inp input.np { padding-left: 12px; }
+.inp select { flex: none; border-left: 1.5px solid var(--line); padding: 10px 6px; font-size: 13px; cursor: pointer; }
+.box { background: var(--sky-2); border-radius: 14px; padding: 16px; display: grid; gap: 10px; }
+.box h3 { margin: 0; font-size: 16px; }
+.sum { display: flex; justify-content: space-between; font-weight: 700; padding-top: 6px; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+
+/* Deudas */
+.debts { display: grid; gap: 10px; }
+.debt { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.1fr) minmax(0, 1.1fr) minmax(0, 1fr) auto; gap: 10px; align-items: end; padding: 12px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.debt .x { border: 0; background: transparent; color: var(--muted); font-size: 22px; width: 40px; height: 44px; cursor: pointer; border-radius: 10px; }
+.debt .x:hover { background: var(--warn-soft); color: var(--warn); }
+.debt .bad { grid-column: 1 / -1; margin: 0; color: var(--warn); font-size: 13px; font-weight: 600; }
+.btn { border: 0; background: var(--accent); color: var(--accent-ink); font: 700 16px var(--f-ui); border-radius: 12px; padding: 12px 18px; cursor: pointer; min-height: 48px; }
+.btn.ghost { background: transparent; color: var(--accent); border: 2px solid var(--accent); }
+.btn:focus-visible, .x:focus-visible, .seg button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+
+/* Diagnóstico */
+.tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.tile { border-radius: 14px; padding: 14px; background: var(--sky-2); display: grid; gap: 2px; align-content: start; }
+.tile span { font-size: 13px; color: var(--ink-2); font-weight: 500; }
+.tile b { font-size: clamp(20px, 2.6vw, 26px); font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.tile small { font-size: 12px; color: var(--muted); }
+.tile.warn { background: var(--warn-soft); } .tile.warn b { color: var(--warn); }
+.tile.good { background: var(--good-soft); } .tile.good b { color: var(--good); }
+.verdict { margin: 0; font-size: 17px; font-weight: 500; }
+
+/* Plan */
+.seg { display: inline-flex; border: 1.5px solid var(--line); border-radius: 12px; overflow: hidden; }
+.seg button { border: 0; background: var(--surface); color: var(--ink-2); font: 700 15px var(--f-ui); padding: 10px 16px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.compare { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.compare th, .compare td { padding: 9px 8px; border-bottom: 1px solid var(--line); text-align: right; }
+.compare th:first-child, .compare td:first-child { text-align: left; }
+.compare thead th { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.compare tr.sel td { font-weight: 700; }
+.order { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.order li { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: start; }
+.order .n { width: 34px; height: 34px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; font-weight: 800; }
+.order .t { font-weight: 700; }
+.order .d { font-size: 14px; color: var(--ink-2); }
+.bar { height: 10px; border-radius: 5px; background: var(--line); margin-top: 6px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); border-radius: 5px; }
+.tablebox { overflow-x: auto; }
+.note { font-size: 13px; color: var(--muted); margin: 0; }
+.status { font-size: 14px; color: var(--muted); margin: 0; }
+
+@media (max-width: 760px) {
+  .grid2, .grid4, .tiles { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .debt { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .debt .f-name { grid-column: 1 / -1; }
+  #gastos { grid-template-columns: minmax(0, 1fr); }
+  .tiles.plan { grid-template-columns: minmax(0, 1fr) !important; }
+  .compare th, .compare td { padding: 8px 4px; font-size: 13px; }
+  .step { padding: 16px; }
+}
+@media print {
+  body { background: #fff; color: #000; font-size: 12px; }
+  .top { background: #fff; }
+  .noprint, .x, .seg, #add { display: none !important; }
+  .step { border: 1px solid #bbb; break-inside: avoid; padding: 12px; }
+  .inp { border: 0; min-height: 0; } .inp select { border: 0; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand">MCI Rionegro · Asesoría financiera para parejas</div>
+    <h1>Plan para salir de deudas</h1>
+    <p class="intro">Para hacer la asesoría con la pareja: anoten juntos ingresos, gastos y deudas, miren el diagnóstico y elijan en qué orden pagarlas. Los números de ejemplo ya están puestos; cámbienlos por los suyos. Nada se guarda ni se envía. Para el crédito de vivienda usa el <a href="./">simulador “El peso de la deuda”</a>.</p>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <!-- 1 -->
+    <section class="step" aria-labelledby="h1s">
+      <div class="step-head"><span class="num">1</span><div><h2 id="h1s">Ingresos y gastos del mes</h2><p>De los dos: lo que entra a la casa entre ambos.</p></div></div>
+      <div class="grid2">
+        <div class="box">
+          <h3>Ingresos</h3>
+          <div class="field"><label for="i1">Ingresos de él</label><div class="inp"><span class="pre">$</span><input id="i1" class="m" inputmode="numeric" value="3.200.000"></div></div>
+          <div class="field"><label for="i2">Ingresos de ella</label><div class="inp"><span class="pre">$</span><input id="i2" class="m" inputmode="numeric" value="1.300.000"></div></div>
+          <div class="field"><label for="i3">Negocio, trabajos extra u otros</label><div class="inp"><span class="pre">$</span><input id="i3" class="m" inputmode="numeric" placeholder="0"></div></div>
+          <div class="sum"><span>Total ingresos</span><span id="tIng"></span></div>
+        </div>
+        <div class="box">
+          <h3>Gastos fijos</h3>
+          <div class="grid2" id="gastos"></div>
+          <div class="sum"><span>Total gastos</span><span id="tGas"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="step" aria-labelledby="h2s">
+      <div class="step-head"><span class="num">2</span><div><h2 id="h2s">Las deudas</h2><p>Las de los dos, sin esconder ninguna: banco, tarjetas, almacenes, celular a cuotas y préstamos con personas.</p></div></div>
+      <div class="debts" id="debts"></div>
+      <div class="row noprint"><button type="button" class="btn ghost" id="add">+ Agregar deuda</button></div>
+      <p class="hint">La tasa está en el extracto: “mensual” (M.V.) en tarjetas y almacenes, “anual” (E.A.) en créditos. Un préstamo sin intereses lleva 0.</p>
+    </section>
+
+    <!-- 3 -->
+    <section class="step" aria-labelledby="h3s">
+      <div class="step-head"><span class="num">3</span><div><h2 id="h3s">Diagnóstico</h2><p>Cómo está la casa hoy.</p></div></div>
+      <div class="tiles">
+        <div class="tile"><span>Deben en total</span><b id="dDeuda"></b><small id="dDeudaS"></small></div>
+        <div class="tile" id="tCarga"><span>Carga de deudas</span><b id="dCarga"></b><small>de los ingresos va a cuotas</small></div>
+        <div class="tile"><span>Cuotas al mes</span><b id="dCuotas"></b><small>suma de mínimos</small></div>
+        <div class="tile" id="tLibre"><span>Queda libre al mes</span><b id="dLibre"></b><small>ingresos − gastos − cuotas</small></div>
+      </div>
+      <p class="verdict" id="verdict"></p>
+    </section>
+
+    <!-- 4 -->
+    <section class="step" aria-labelledby="h4s">
+      <div class="step-head"><span class="num">4</span><div><h2 id="h4s">El plan</h2><p>Se paga el mínimo de todas y el abono extra va a una sola. Cuando se termina, su cuota pasa a la siguiente.</p></div></div>
+      <div class="grid2">
+        <div class="field">
+          <span class="lbl">Método</span>
+          <div class="seg" role="group" aria-label="Método">
+            <button type="button" data-m="nieve" aria-pressed="true">Bola de nieve</button>
+            <button type="button" data-m="avalancha" aria-pressed="false">Avalancha</button>
+          </div>
+          <p class="hint" id="mHint"></p>
+        </div>
+        <div class="field">
+          <label for="extra">Abono extra al mes</label>
+          <div class="inp"><span class="pre">$</span><input id="extra" class="m" inputmode="numeric" value="200.000"></div>
+          <p class="hint" id="extraHint"></p>
+        </div>
+      </div>
+      <div class="tiles plan" style="grid-template-columns:repeat(3,minmax(0,1fr))">
+        <div class="tile good"><span>Libres de deudas en</span><b id="pTiempo"></b><small id="pFecha"></small></div>
+        <div class="tile good"><span>Terminan antes</span><b id="pAntes"></b><small>que pagando solo mínimos</small></div>
+        <div class="tile good"><span>Se ahorran</span><b id="pAhorro"></b><small>en intereses</small></div>
+      </div>
+      <div>
+        <p class="lbl" style="margin:0 0 10px">Orden para pagar</p>
+        <ol class="order" id="order"></ol>
+      </div>
+      <div class="tablebox">
+        <table class="compare">
+          <thead><tr><th></th><th>Meses</th><th>Intereses</th><th>Total pagado</th></tr></thead>
+          <tbody id="cmp"></tbody>
+        </table>
+      </div>
+      <div class="row noprint">
+        <button type="button" class="btn" id="copy">Copiar resumen</button>
+        <a class="btn ghost" id="wa" href="https://wa.me/" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center">Enviar por WhatsApp</a>
+        <button type="button" class="btn ghost" id="print">Imprimir</button>
+      </div>
+      <p class="status" id="status" aria-live="polite"></p>
+      <p class="note">Proyección con tasas y cuotas fijas; no incluye seguros, intereses de mora ni nuevas compras. Las fechas son aproximadas, contando desde este mes.</p>
+    </section>
+  </div>
+</main>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const money = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
+  const fmt = v => money.format(Math.round(v)).replace(/\$[\s ]*/, '$').replace(/ /g, ' ');
+  const digits = s => Number(String(s).replace(/[^\d]/g, '')) || 0;
+  const dec = s => { const n = parseFloat(String(s).replace(/\./g, '').replace(',', '.').replace(/[^\d.]/g, '')); return isFinite(n) ? n : 0; };
+  const dots = n => n ? n.toLocaleString('es-CO') : '';
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  function tiempo(m) { const a = Math.floor(m / 12), r = m % 12, p = []; if (a) p.push(a + (a === 1 ? ' año' : ' años')); if (r) p.push(r + (r === 1 ? ' mes' : ' meses')); return p.join(' y ') || '0 meses'; }
+  function mesAno(m) { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + m); const s = d.toLocaleDateString('es-CO', { month: 'long', year: 'numeric' }); return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  // ---------- Gastos ----------
+  const GASTOS = [['Diezmo y ofrendas', 450000], ['Arriendo o administración', 1100000], ['Servicios y celular', 420000], ['Mercado', 900000], ['Transporte o gasolina', 300000], ['Educación', 0], ['Salud', 0], ['Otros', 200000]];
+  $('gastos').innerHTML = GASTOS.map((g, k) => '<div class="field"><label for="g' + k + '">' + g[0] + '</label><div class="inp"><span class="pre">$</span><input id="g' + k + '" class="m" inputmode="numeric" value="' + dots(g[1]) + '" placeholder="0"></div></div>').join('');
+
+  // ---------- Deudas ----------
+  const EJ = [
+    { n: 'Tarjeta de crédito', s: 3500000, t: '2,2', u: 'mv', c: 180000 },
+    { n: 'Crédito de libre inversión', s: 12000000, t: '22', u: 'ea', c: 450000 },
+    { n: 'Celular a cuotas', s: 900000, t: '2,5', u: 'mv', c: 95000 },
+    { n: 'Préstamo de un familiar', s: 1500000, t: '0', u: 'mv', c: 150000 }
+  ];
+  let uid = 0;
+  function addDebt(d) {
+    d = d || { n: '', s: '', t: '', u: 'mv', c: '' };
+    const k = uid++;
+    const el = document.createElement('div');
+    el.className = 'debt'; el.dataset.k = k;
+    el.innerHTML =
+      '<div class="field f-name"><label for="dn' + k + '">A quién le debe</label><div class="inp"><input id="dn' + k + '" class="np" value="' + esc(d.n) + '" placeholder="Ej.: Tarjeta Banco X"></div></div>' +
+      '<div class="field"><label for="ds' + k + '">Saldo</label><div class="inp"><span class="pre">$</span><input id="ds' + k + '" class="m" inputmode="numeric" value="' + dots(d.s) + '" placeholder="0"></div></div>' +
+      '<div class="field"><label for="dt' + k + '">Tasa</label><div class="inp"><input id="dt' + k + '" class="np" inputmode="decimal" value="' + d.t + '" placeholder="0"><span class="suf">%</span><select id="du' + k + '" aria-label="Tipo de tasa"><option value="mv"' + (d.u === 'mv' ? ' selected' : '') + '>mes</option><option value="ea"' + (d.u === 'ea' ? ' selected' : '') + '>año</option></select></div></div>' +
+      '<div class="field"><label for="dc' + k + '">Cuota mínima</label><div class="inp"><span class="pre">$</span><input id="dc' + k + '" class="m" inputmode="numeric" value="' + dots(d.c) + '" placeholder="0"></div></div>' +
+      '<button type="button" class="x" aria-label="Quitar esta deuda">×</button>' +
+      '<p class="bad" hidden></p>';
+    $('debts').appendChild(el);
+    el.querySelector('.x').addEventListener('click', () => { el.remove(); update(); });
+    bind(el);
+  }
+  function readDebts() {
+    return [...document.querySelectorAll('.debt')].map(el => {
+      const k = el.dataset.k, r = dec($('dt' + k).value) / 100;
+      return { el, name: $('dn' + k).value.trim() || 'Deuda sin nombre', s: digits($('ds' + k).value), i: $('du' + k).value === 'ea' ? Math.pow(1 + r, 1 / 12) - 1 : r, c: digits($('dc' + k).value) };
+    }).filter(d => d.s > 0);
+  }
+
+  // ---------- Simulación ----------
+  // order: lista de índices en el orden de ataque; extra: abono adicional; roll: si las cuotas liberadas pasan a la siguiente
+  function simulate(debts, order, extra, roll) {
+    const bal = debts.map(d => d.s), paidAt = debts.map(() => 0);
+    let m = 0, tInt = 0, freed = 0;
+    while (bal.some(b => b > 0.5) && m < 600) {
+      m++;
+      let pool = extra + (roll ? freed : 0);
+      debts.forEach((d, j) => {
+        if (bal[j] <= 0.5) return;
+        const int = bal[j] * d.i; tInt += int; bal[j] += int;
+        const p = Math.min(d.c, bal[j]); bal[j] -= p;
+        if (!roll && p < d.c) {} // cuota sobrante sin rodar
+      });
+      for (const j of order) {
+        if (pool <= 0) break;
+        if (bal[j] <= 0.5) continue;
+        const p = Math.min(pool, bal[j]); bal[j] -= p; pool -= p;
+      }
+      debts.forEach((d, j) => { if (bal[j] <= 0.5 && !paidAt[j]) { paidAt[j] = m; bal[j] = 0; if (roll) freed += d.c; } });
+    }
+    const total = debts.reduce((a, d) => a + d.s, 0) + tInt;
+    return { months: m, interest: tInt, total, paidAt, stuck: m >= 600 };
+  }
+  const orderFor = (debts, method) => debts.map((d, j) => j).sort((a, b) =>
+    method === 'nieve' ? (debts[a].s - debts[b].s) || (debts[b].i - debts[a].i) : (debts[b].i - debts[a].i) || (debts[a].s - debts[b].s));
+
+  let method = 'nieve', last = null;
+  function update() {
+    const ing = ['i1', 'i2', 'i3'].reduce((a, id) => a + digits($(id).value), 0);
+    const gas = GASTOS.reduce((a, g, k) => a + digits($('g' + k).value), 0);
+    $('tIng').textContent = fmt(ing); $('tGas').textContent = fmt(gas);
+    const debts = readDebts();
+    document.querySelectorAll('.debt .bad').forEach(p => { p.hidden = true; });
+    let bad = false;
+    debts.forEach(d => {
+      const int = d.s * d.i;
+      if (d.c <= int + 0.5) { const p = d.el.querySelector('.bad'); p.hidden = false; p.textContent = 'La cuota (' + fmt(d.c) + ') no alcanza a cubrir los intereses del mes (' + fmt(int) + '). Esta deuda crece: atiéndela primero o revisa los datos.'; bad = true; }
+    });
+    const cuotas = debts.reduce((a, d) => a + d.c, 0), deuda = debts.reduce((a, d) => a + d.s, 0);
+    const carga = ing ? cuotas / ing : 0, libre = ing - gas - cuotas;
+    $('dDeuda').textContent = fmt(deuda); $('dDeudaS').textContent = debts.length + (debts.length === 1 ? ' deuda' : ' deudas');
+    $('dCarga').textContent = ing ? Math.round(carga * 100) + ' %' : '—';
+    $('dCuotas').textContent = fmt(cuotas);
+    $('dLibre').textContent = fmt(libre);
+    $('tCarga').className = 'tile' + (carga > 0.4 ? ' warn' : carga > 0 && carga <= 0.3 ? ' good' : '');
+    $('tLibre').className = 'tile' + (libre < 0 ? ' warn' : ' good');
+    $('verdict').textContent = !ing ? 'Escribe los ingresos para ver el diagnóstico.'
+      : libre < 0 ? 'Cada mes falta ' + fmt(-libre) + ': el hogar se está endeudando para vivir. Antes de abonar, hay que recortar gastos o aumentar ingresos.'
+      : carga > 0.4 ? 'Más del 40 % de lo que entra se va en cuotas. Es una carga alta: el plan debe empezar ya y no sacar deudas nuevas.'
+      : carga > 0.3 ? 'La carga está por encima del promedio de los hogares colombianos (27 %). Hay margen para mejorar con un plan.'
+      : 'La carga está en un nivel manejable. Con un abono constante pueden salir pronto.';
+    $('extraHint').textContent = libre > 0 ? 'Después de gastos y cuotas quedan ' + fmt(libre) + ' al mes.' : 'Hoy no queda dinero libre: busquen vasijas (gastos que se puedan recortar).';
+
+    const extra = digits($('extra').value);
+    $('mHint').textContent = method === 'nieve' ? 'Primero la deuda más pequeña: victorias rápidas que dan ánimo.' : 'Primero la deuda con la tasa más alta: se pagan menos intereses.';
+    if (!debts.length) { $('order').innerHTML = '<li><span></span><span class="d">Agrega al menos una deuda con saldo.</span></li>'; $('cmp').innerHTML = ''; ['pTiempo', 'pAntes', 'pAhorro'].forEach(id => $(id).textContent = '—'); $('pFecha').textContent = ''; last = null; return; }
+    const base = simulate(debts, orderFor(debts, 'nieve'), 0, false);
+    const nieve = simulate(debts, orderFor(debts, 'nieve'), extra, true);
+    const aval = simulate(debts, orderFor(debts, 'avalancha'), extra, true);
+    const plan = method === 'nieve' ? nieve : aval, ord = orderFor(debts, method);
+    $('pTiempo').textContent = plan.stuck ? 'Más de 50 años' : tiempo(plan.months);
+    $('pFecha').textContent = plan.stuck ? 'revisa las cuotas' : 'hacia ' + mesAno(plan.months);
+    $('pAntes').textContent = base.stuck || plan.stuck ? '—' : (base.months - plan.months > 0 ? tiempo(base.months - plan.months) : '—');
+    $('pAhorro').textContent = base.stuck ? '—' : fmt(Math.max(0, base.interest - plan.interest));
+    $('order').innerHTML = ord.map((j, n) => {
+      const d = debts[j], tasaEA = (Math.pow(1 + d.i, 12) - 1) * 100;
+      const pct = plan.months ? Math.max(4, plan.paidAt[j] / plan.months * 100) : 0;
+      return '<li><span class="n">' + (n + 1) + '</span><div><div class="t">' + esc(d.name) + '</div><div class="d">Saldo ' + fmt(d.s) + ' · ' + tasaEA.toFixed(1).replace('.', ',') + ' % al año · queda pagada ' + (plan.paidAt[j] ? 'en el mes ' + plan.paidAt[j] + ' (' + mesAno(plan.paidAt[j]) + ')' : 'después de 50 años') + '</div><div class="bar"><i style="width:' + pct + '%"></i></div></div></li>';
+    }).join('');
+    const row = (name, s, sel) => '<tr' + (sel ? ' class="sel"' : '') + '><td>' + name + '</td><td>' + (s.stuck ? '+600' : s.months) + '</td><td>' + fmt(s.interest) + '</td><td>' + fmt(s.total) + '</td></tr>';
+    $('cmp').innerHTML = row('Solo mínimos', base, false) + row('Bola de nieve', nieve, method === 'nieve') + row('Avalancha', aval, method === 'avalancha');
+    last = { ing, gas, cuotas, deuda, carga, libre, extra, debts, ord, plan, base };
+    const t = resumen(); $('wa').href = 'https://wa.me/?text=' + encodeURIComponent(t);
+  }
+
+  function resumen() {
+    if (!last) return '';
+    const { ing, gas, cuotas, deuda, carga, libre, extra, debts, ord, plan, base } = last;
+    const L = ['PLAN PARA SALIR DE DEUDAS', '',
+      'Ingresos: ' + fmt(ing) + ' · Gastos: ' + fmt(gas) + ' · Cuotas: ' + fmt(cuotas),
+      'Deuda total: ' + fmt(deuda) + ' · Carga: ' + Math.round(carga * 100) + ' % · Libre: ' + fmt(libre), '',
+      'Método: ' + (method === 'nieve' ? 'bola de nieve' : 'avalancha') + ' · Abono extra: ' + fmt(extra) + ' al mes', '', 'Orden para pagar:'];
+    ord.forEach((j, n) => L.push((n + 1) + '. ' + debts[j].name + ' (' + fmt(debts[j].s) + ') → pagada ' + (plan.paidAt[j] ? 'en ' + mesAno(plan.paidAt[j]) : '—')));
+    L.push('', 'Libres de deudas en ' + tiempo(plan.months) + (base.months > plan.months ? ', ' + tiempo(base.months - plan.months) + ' antes que con solo mínimos' : '') + '.');
+    L.push('Ahorro en intereses: ' + fmt(Math.max(0, base.interest - plan.interest)) + '.', '', '“Paga a tus acreedores, y tú y tus hijos vivid de lo que quede.” 2 Reyes 4:7');
+    return L.join('\n');
+  }
+
+  function bind(root) {
+    root.querySelectorAll('input, select').forEach(el => {
+      el.addEventListener('input', update); el.addEventListener('change', update);
+      if (el.classList.contains('m')) el.addEventListener('blur', () => { el.value = dots(digits(el.value)); });
+    });
+  }
+  bind(document);
+  EJ.forEach(addDebt);
+  $('add').addEventListener('click', () => { addDebt(); const els = document.querySelectorAll('.debt'); els[els.length - 1].querySelector('input').focus(); });
+  document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
+    method = b.dataset.m; document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); update();
+  }));
+  $('copy').addEventListener('click', () => {
+    const t = resumen();
+    try { navigator.clipboard.writeText(t).then(() => { $('status').textContent = 'Resumen copiado.'; }, () => { $('status').textContent = 'No se pudo copiar aquí.'; }); } catch (e) { $('status').textContent = 'No se pudo copiar aquí.'; }
+  });
+  $('print').addEventListener('click', () => { try { window.print(); } catch (e) {} });
+  update();
+})();
+</script>
+</body>
+</html>
