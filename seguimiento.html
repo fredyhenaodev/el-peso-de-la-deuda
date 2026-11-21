@@ -149,6 +149,28 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
 .mini { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
 .mini i { display: block; height: 100%; background: var(--good); transition: width .4s; }
 
+/* Ventas */
+.sell-sum { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.sell-sum div { background: var(--sky-2); border-radius: 14px; padding: 12px 14px; display: grid; }
+.sell-sum div.g { background: var(--good-soft); }
+.sell-sum span { font-size: 13px; color: var(--ink-2); }
+.sell-sum b { font-size: 20px; font-variant-numeric: tabular-nums; }
+.sell-sum div.g b { color: var(--good); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border: 1.5px solid var(--line); background: var(--surface); color: var(--ink-2); font: 600 13px var(--f-ui); border-radius: 999px; padding: 7px 12px; cursor: pointer; min-height: 38px; }
+.chip:hover { border-color: var(--accent); color: var(--accent); }
+.sells { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.sell { border: 1px solid var(--line); border-radius: 16px; padding: 12px; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1.2fr) auto; gap: 8px 10px; align-items: end; }
+.sell.sold { background: var(--good-soft); border-color: transparent; }
+.sell .x { height: 44px; }
+.sell .soldrow { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.sell .soldrow label.tg { display: flex; align-items: center; gap: 8px; font-weight: 700; cursor: pointer; min-height: 40px; }
+.sell .soldrow label.tg input { width: 24px; height: 24px; accent-color: var(--good); }
+.sell .soldrow .inp { min-height: 40px; flex: 1; min-width: 160px; max-width: 240px; }
+.sell .soldrow .inp input { font-size: 15px; padding-block: 8px; }
+.sell select { flex: 1; min-width: 0; border: 0; background: transparent; color: var(--ink); font: 600 15px var(--f-ui); padding: 12px; outline: none; cursor: pointer; }
+.sell .f-n .inp input { font-size: 15px; }
+
 /* Versículo */
 .verse { background: var(--sky); border: 0; text-align: center; padding: 24px 22px; }
 .verse q { font-size: 19px; line-height: 1.45; font-weight: 500; quotes: "“" "”"; font-style: italic; }
@@ -180,6 +202,14 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
 @keyframes fall { to { transform: translateY(105vh) rotate(720deg); } }
 @media (prefers-reduced-motion: reduce) { .confetti { display: none; } .ring .val, .bigbar i { transition: none; } .badge.new .md { animation: none; } }
 
+@media (max-width: 560px) {
+  .sell { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; }
+  .sell .f-n { grid-column: 1 / 3; grid-row: 1; }
+  .sell .x { grid-column: 3; grid-row: 1; }
+  .sell .f-v { grid-column: 1; grid-row: 2; }
+  .sell .f-w { grid-column: 2 / -1; grid-row: 2; }
+  .sell .soldrow { grid-row: 3; }
+}
 @media (max-width: 480px) {
   .hero-main { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; }
   .badges { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
@@ -281,6 +311,23 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
       <div class="checks" id="checks"></div>
     </section>
 
+    <!-- Ventas -->
+    <section class="card" id="sellCard" aria-labelledby="h-s" hidden>
+      <div class="head"><h2 id="h-s">Lo que vamos a vender</h2><small id="nSell"></small></div>
+      <p class="sub">“Ve y vende el aceite, y paga a tus acreedores.” Lo que vendan va completo a la deuda que están atacando.</p>
+      <div class="sell-sum">
+        <div><span>Meta de venta</span><b id="sMeta">$0</b></div>
+        <div class="g"><span>Ya vendimos</span><b id="sVend">$0</b></div>
+      </div>
+      <div class="mini"><i id="sellBar" style="width:0%"></i></div>
+      <ul class="sells" id="sells"></ul>
+      <div class="field">
+        <span class="lbl">Agregar</span>
+        <div class="chips" id="chips"></div>
+      </div>
+      <p class="note">Entreguen en un lugar público y solo cuando vean la plata en la cuenta: una captura de pantalla no es un pago.</p>
+    </section>
+
     <!-- Anotar el mes -->
     <section class="card" aria-labelledby="h-mes" id="mesCard" hidden>
       <div>
@@ -357,7 +404,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
   const monthsBetween = (a, b) => (b.getFullYear() - a.getFullYear()) * 12 + (b.getMonth() - a.getMonth()) + (b.getDate() - a.getDate()) / 30;
   const sh = v => v >= 1e6 ? '$' + (v / 1e6).toLocaleString('es-CO', { maximumFractionDigits: 1 }) + ' M' : '$' + Math.round(v / 1e3) + ' mil';
 
-  const BLANK = () => ({ pareja: '', inicio: '', debts: [], entries: [], checks: [{ t: '', ok: false }, { t: '', ok: false }, { t: '', ok: false }], cita: '', enc: [false, false, false, false, false], seen: [] });
+  const BLANK = () => ({ pareja: '', inicio: '', debts: [], entries: [], checks: [{ t: '', ok: false }, { t: '', ok: false }, { t: '', ok: false }], cita: '', enc: [false, false, false, false, false], seen: [], ventas: [] });
   let S = BLANK(), demo = false, saved = null;
   function load() { try { const v = JSON.parse(localStorage.getItem(KEY)); if (v && Array.isArray(v.debts)) S = Object.assign(BLANK(), v); } catch (e) {} }
   function store() { if (demo) return; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
@@ -397,7 +444,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
   }
   function badgeList(pct, pagadas, okChecks) {
     return [
-      ['inicio', '🌱', 'Empezamos', S.debts.length > 0],
+      ['venta', '🏷️', 'Primera venta', S.ventas.some(x => x.sold)],
       ['primer', '✍️', 'Primer mes anotado', S.entries.length > 0],
       ['p10', '💪', '10 % pagado', pct >= 10],
       ['deuda1', '🎉', 'Primera deuda pagada', pagadas >= 1],
@@ -476,6 +523,52 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
     $('compBar').style.width = (w.length ? ok / w.length * 100 : 0) + '%';
   }
 
+  // ---------- Ventas ----------
+  const PLAT = ['Facebook Marketplace', 'WhatsApp', 'Mercado Libre', 'TuCarro', 'GoTrendier', 'Decathlon Segunda Vida', 'Otro'];
+  const IDEAS = [['Ropa y zapatos', 'GoTrendier'], ['Celular o tablet', 'Mercado Libre'], ['Electrodoméstico', 'Facebook Marketplace'], ['Mueble', 'Facebook Marketplace'], ['Bicicleta o gimnasio', 'Facebook Marketplace'], ['Herramientas', 'Mercado Libre'], ['Cosas del bebé', 'Facebook Marketplace'], ['Consola', 'Mercado Libre'], ['Carro o moto', 'TuCarro'], ['Otra cosa', 'Facebook Marketplace']];
+  $('chips').innerHTML = IDEAS.map((x, k) => '<button type="button" class="chip" data-k="' + k + '">+ ' + x[0] + '</button>').join('');
+  $('chips').querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => {
+    const x = IDEAS[b.dataset.k];
+    S.ventas.push({ n: x[0] === 'Otra cosa' ? '' : x[0], v: 0, w: x[1], sold: false, real: 0 });
+    store(); renderSells();
+    const items = $('sells').querySelectorAll('.sell'); const last = items[items.length - 1];
+    last.querySelector(x[0] === 'Otra cosa' ? '.vn' : '.vv').focus();
+  }));
+  function renderSells() {
+    $('sells').innerHTML = S.ventas.map((x, i) =>
+      '<li class="sell' + (x.sold ? ' sold' : '') + '" data-i="' + i + '">' +
+      '<div class="field f-n"><label for="vn' + i + '">Qué es</label><div class="inp"><input id="vn' + i + '" class="np vn" value="' + esc(x.n) + '" placeholder="Ej.: Horno microondas"></div></div>' +
+      '<div class="field f-v"><label for="vv' + i + '">Vale más o menos</label><div class="inp"><span class="pre">$</span><input id="vv' + i + '" class="vv" inputmode="numeric" value="' + dots(x.v) + '" placeholder="0"></div></div>' +
+      '<div class="field f-w"><label for="vw' + i + '">Dónde</label><div class="inp"><select id="vw' + i + '" class="vw">' + PLAT.map(p => '<option' + (p === x.w ? ' selected' : '') + '>' + p + '</option>').join('') + '</select></div></div>' +
+      '<button type="button" class="x" aria-label="Quitar">×</button>' +
+      '<div class="soldrow"><label class="tg"><input type="checkbox" class="vs"' + (x.sold ? ' checked' : '') + '> ¡Vendido!</label>' +
+      (x.sold ? '<div class="inp" title="En cuánto se vendió"><span class="pre">en $</span><input class="vr" inputmode="numeric" aria-label="En cuánto se vendió" value="' + dots(x.real || x.v) + '"></div>' : '') + '</div></li>').join('');
+    $('sells').querySelectorAll('.sell').forEach(li => {
+      const i = +li.dataset.i, x = S.ventas[i];
+      li.querySelector('.vn').addEventListener('input', e => { x.n = e.target.value; store(); sellTotals(); });
+      li.querySelector('.vv').addEventListener('input', e => { x.v = digits(e.target.value); store(); sellTotals(); });
+      li.querySelector('.vv').addEventListener('blur', e => { e.target.value = dots(digits(e.target.value)); });
+      li.querySelector('.vw').addEventListener('change', e => { x.w = e.target.value; store(); });
+      li.querySelector('.x').addEventListener('click', () => { S.ventas.splice(i, 1); store(); renderSells(); });
+      li.querySelector('.vs').addEventListener('change', e => {
+        x.sold = e.target.checked; if (x.sold && !x.real) x.real = x.v;
+        store(); renderSells(); render(true);
+        if (x.sold) { confetti(70); flash('¡Vendieron ' + (x.n || 'algo') + '! Abónenlo completo a la deuda.'); }
+      });
+      const vr = li.querySelector('.vr');
+      if (vr) { vr.addEventListener('input', e => { x.real = digits(e.target.value); store(); sellTotals(); }); vr.addEventListener('blur', e => { e.target.value = dots(digits(e.target.value)); }); }
+    });
+    sellTotals();
+  }
+  function sellTotals() {
+    const meta = S.ventas.reduce((a, x) => a + (x.sold ? (x.real || x.v) : x.v), 0), vend = S.ventas.filter(x => x.sold).reduce((a, x) => a + (x.real || x.v), 0);
+    $('sMeta').textContent = fmt(meta); $('sVend').textContent = fmt(vend);
+    $('sellBar').style.width = (meta ? vend / meta * 100 : 0) + '%';
+    const n = S.ventas.length, k = S.ventas.filter(x => x.sold).length;
+    $('nSell').textContent = n ? k + ' de ' + n + ' vendidas' : '';
+    $('wa').href = 'https://wa.me/?text=' + encodeURIComponent(resumen());
+  }
+
   // ---------- Ruta ----------
   function renderRuta() {
     const next = S.enc.indexOf(false);
@@ -495,7 +588,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
   function render(animate) {
     const has = S.debts.length > 0;
     $('welcome').hidden = has;
-    ['hero', 'debtsCard', 'badgesCard', 'rutaCard', 'compCard', 'mesCard', 'histCard', 'dock'].forEach(id => $(id).hidden = !has);
+    ['hero', 'debtsCard', 'badgesCard', 'rutaCard', 'compCard', 'sellCard', 'mesCard', 'histCard', 'dock'].forEach(id => $(id).hidden = !has);
     $('demoBar').hidden = !demo;
     $('hello').hidden = !S.pareja; $('hello').textContent = S.pareja ? 'Hola, ' + S.pareja : '';
     const mes = has ? Math.max(1, Math.floor(monthsBetween(startDate(), new Date())) + 1) : 0;
@@ -603,6 +696,11 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
     S.debts.forEach((d, j) => L.push('• ' + d.n + ': ' + ((cur[j] || 0) <= 0 && d.ini > 0 ? '¡pagada!' : fmt(cur[j] || 0))));
     const ch = S.checks.filter(c => c.t);
     if (ch.length) { L.push('', 'Compromisos:'); ch.forEach(c => L.push((c.ok ? '✔ ' : '○ ') + c.t)); }
+    if (S.ventas.length) {
+      const vend = S.ventas.filter(x => x.sold).reduce((a, x) => a + (x.real || x.v), 0);
+      L.push('', 'Lo que vamos a vender (vendido ' + fmt(vend) + '):');
+      S.ventas.forEach(x => L.push((x.sold ? '✔ ' : '○ ') + (x.n || 'Sin nombre') + ' · ' + (x.sold ? 'vendido en ' + fmt(x.real || x.v) : fmt(x.v) + ' en ' + x.w)));
+    }
     L.push('', 'Encuentros: ' + S.enc.filter(Boolean).length + ' de 5');
     return L.join('\n');
   }
@@ -626,17 +724,18 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
       debts: [{ n: 'Celular a cuotas', ini: 900000 }, { n: 'Préstamo de un familiar', ini: 1500000 }, { n: 'Tarjeta de crédito', ini: 3500000 }, { n: 'Crédito de libre inversión', ini: 12000000 }],
       entries: [{ f: m(1), saldos: [520000, 1350000, 3390000, 11780000] }, { f: m(2), saldos: [0, 1200000, 3280000, 11550000] }, { f: m(3), saldos: [0, 790000, 3160000, 11320000] }],
       checks: [{ t: 'No usar la tarjeta de crédito', ok: true }, { t: 'Abonar $200.000 extra cada mes', ok: true }, { t: 'Revisar el presupuesto juntos cada domingo', ok: false }],
-      enc: [true, true, true, false, false], seen: ['inicio', 'primer', 'p10', 'deuda1', 'racha', 'comp']
+      enc: [true, true, true, false, false], seen: ['venta', 'primer', 'p10', 'deuda1', 'racha', 'comp'],
+      ventas: [{ n: 'Bicicleta estática', v: 350000, w: 'Facebook Marketplace', sold: true, real: 320000 }, { n: 'Celular anterior', v: 250000, w: 'Mercado Libre', sold: true, real: 250000 }, { n: 'Coche del bebé', v: 300000, w: 'Facebook Marketplace', sold: false, real: 0 }, { n: 'Ropa que ya no usamos', v: 150000, w: 'GoTrendier', sold: false, real: 0 }]
     });
   }
-  $('demoIn').addEventListener('click', () => { saved = S; demo = true; S = demoData(); renderSetup(); renderChecks(); render(); window.scrollTo(0, 0); });
-  $('demoOut').addEventListener('click', () => { demo = false; S = saved || BLANK(); saved = null; renderSetup(); renderChecks(); render(); $('setupBox').open = !S.debts.length; window.scrollTo(0, 0); });
+  $('demoIn').addEventListener('click', () => { saved = S; demo = true; S = demoData(); renderSetup(); renderChecks(); renderSells(); render(); window.scrollTo(0, 0); });
+  $('demoOut').addEventListener('click', () => { demo = false; S = saved || BLANK(); saved = null; renderSetup(); renderChecks(); renderSells(); render(); $('setupBox').open = !S.debts.length; window.scrollTo(0, 0); });
 
   // ---------- Respaldo ----------
   $('copy').addEventListener('click', () => { try { navigator.clipboard.writeText(resumen()).then(() => flash('Avance copiado.'), () => flash('No se pudo copiar.')); } catch (e) {} });
   $('copyBk').addEventListener('click', () => { try { navigator.clipboard.writeText(JSON.stringify(S)).then(() => flash('Respaldo copiado.'), () => { $('backup').select(); }); } catch (e) { $('backup').select(); } });
   $('restore').addEventListener('click', () => {
-    try { const v = JSON.parse($('backup').value); if (!v || !Array.isArray(v.debts)) throw 0; S = Object.assign(BLANK(), v); while (S.checks.length < 3) S.checks.push({ t: '', ok: false }); demo = false; store(); renderSetup(); renderChecks(); render(); flash('Datos restaurados.'); }
+    try { const v = JSON.parse($('backup').value); if (!v || !Array.isArray(v.debts)) throw 0; S = Object.assign(BLANK(), v); while (S.checks.length < 3) S.checks.push({ t: '', ok: false }); demo = false; store(); renderSetup(); renderChecks(); renderSells(); render(); flash('Datos restaurados.'); }
     catch (e) { flash('Ese texto no es un respaldo válido.'); }
   });
   $('reset').addEventListener('click', () => { $('resetAsk').hidden = false; });
@@ -645,8 +744,9 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
 
   load();
   if (!Array.isArray(S.enc) || S.enc.length !== 5) S.enc = [false, false, false, false, false];
+  if (!Array.isArray(S.ventas)) S.ventas = [];
   $('fecha').value = today();
-  renderSetup(); renderChecks(); render();
+  renderSetup(); renderChecks(); renderSells(); render();
 })();
 </script>
 </body>
