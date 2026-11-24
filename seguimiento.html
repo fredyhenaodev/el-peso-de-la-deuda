@@ -56,6 +56,13 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
 .note { font-size: 13px; color: var(--muted); margin: 0; }
 .status { font-size: 14px; color: var(--good); margin: 0; font-weight: 600; }
 
+/* Pareja o persona */
+.seg { display: inline-flex; border: 1.5px solid var(--line); border-radius: 12px; overflow: hidden; }
+.seg button { border: 0; background: transparent; color: inherit; font: 700 14px var(--f-ui); padding: 10px 14px; cursor: pointer; flex: 1; white-space: nowrap; min-height: 44px; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+.welcome .seg button[aria-pressed="true"] { background: var(--hero-ink); color: var(--hero-b); }
+.seg button:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+
 /* Demo */
 .demo { background: var(--gold-soft); border: 1.5px dashed var(--gold); border-radius: 16px; padding: 12px 14px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; font-weight: 600; font-size: 14px; }
 
@@ -273,7 +280,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
   <div class="wrap">
     <div>
       <div class="brand">F&amp;T Asesorías · Acompañamiento</div>
-      <h1>Nuestro avance</h1>
+      <h1><span data-s="Mi avance">Nuestro avance</span></h1>
       <p class="hello" id="hello" hidden></p>
     </div>
     <span class="pill" id="mesPill" hidden></span>
@@ -287,14 +294,18 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
 
     <!-- Bienvenida -->
     <section class="welcome" id="welcome" aria-labelledby="h-w">
-      <h2 id="h-w">Juntos, deuda por deuda</h2>
-      <p>Este es su registro de los próximos 6 meses. Todo se guarda solo en este celular; nadie más lo ve.</p>
+      <h2 id="h-w"><span data-s="Deuda por deuda">Juntos, deuda por deuda</span></h2>
+      <p><span data-s="Este es tu registro de los próximos 6 meses.">Este es su registro de los próximos 6 meses.</span> Todo se guarda solo en este celular; nadie más lo ve.</p>
+      <div class="seg" role="group" aria-label="Para quién es" style="background:transparent;border-color:var(--hero-2);max-width:360px">
+        <button type="button" data-modo="pareja" aria-pressed="true">Somos pareja</button>
+        <button type="button" data-modo="persona" aria-pressed="false">Soy una persona</button>
+      </div>
       <ol class="steps3">
-        <li><b>1</b><span>Anoten sus deudas con el saldo del día de la asesoría.</span></li>
-        <li><b>2</b><span>Cada mes copien el saldo nuevo del extracto.</span></li>
-        <li><b>3</b><span>Vendan lo que no usan, miren cómo baja la deuda y celebren cada una que paguen.</span></li>
+        <li><b>1</b><span><span data-s="Anota tus deudas con el saldo del día de la asesoría.">Anoten sus deudas con el saldo del día de la asesoría.</span></span></li>
+        <li><b>2</b><span><span data-s="Cada mes copia el saldo nuevo del extracto.">Cada mes copien el saldo nuevo del extracto.</span></span></li>
+        <li><b>3</b><span><span data-s="Vende lo que no usas, mira cómo baja la deuda y celebra cada una que pagues.">Vendan lo que no usan, miren cómo baja la deuda y celebren cada una que paguen.</span></span></li>
       </ol>
-      <div class="row"><button type="button" class="btn light" id="goSetup">Anotar nuestras deudas</button><button type="button" class="btn ghost" id="demoIn" style="color:var(--hero-ink);border-color:var(--hero-2)">Ver un ejemplo</button></div>
+      <div class="row"><button type="button" class="btn light" id="goSetup"><span data-s="Anotar mis deudas">Anotar nuestras deudas</span></button><button type="button" class="btn ghost" id="demoIn" style="color:var(--hero-ink);border-color:var(--hero-2)">Ver un ejemplo</button></div>
     </section>
 
     <!-- Portada -->
@@ -305,7 +316,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
           <div class="in"><b id="pct">0%</b><span>pagado</span></div>
         </div>
         <div class="hero-txt">
-          <h2 id="h-av" class="k" style="margin:0;font-size:13px">Han bajado</h2>
+          <h2 id="h-av" class="k" style="margin:0;font-size:13px"><span data-s="Has bajado">Han bajado</span></h2>
           <div class="v" id="bajado">$0</div>
           <div class="s" id="deben"></div>
         </div>
@@ -327,7 +338,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
         <p class="left" id="fLeft"></p>
       </div>
       <div class="bigbar"><i id="fBar" style="width:0%"></i></div>
-      <p class="note">Paguen el mínimo de las demás y todo el abono extra va a esta. Cuando se acabe, su cuota pasa a la siguiente.</p>
+      <p class="note"><span data-s="Paga el mínimo de las demás y todo el abono extra va a esta.">Paguen el mínimo de las demás y todo el abono extra va a esta.</span> Cuando se acabe, su cuota pasa a la siguiente.</p>
     </section>
 
     <!-- Gráfica y deudas -->
@@ -348,38 +359,38 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
       <div class="head"><h2 id="h-x">Plata extra que viene</h2><small id="nExtra"></small></div>
       <p class="alert" id="extraAlert" hidden></p>
       <ul class="extras" id="extras"></ul>
-      <p class="note">Aplica si trabajan con contrato laboral. Decidan antes de que llegue cuánto va a la deuda: la plata que llega sin plan se gasta sola.</p>
+      <p class="note"><span data-s="Aplica si trabajas con contrato laboral. Decide antes de que llegue cuánto va a la deuda:">Aplica si trabajan con contrato laboral. Decidan antes de que llegue cuánto va a la deuda:</span> la plata que llega sin plan se gasta sola.</p>
     </section>
 
     <!-- Ruta -->
     <section class="card" id="rutaCard" aria-labelledby="h-r" hidden>
-      <div class="head"><h2 id="h-r">Nuestra ruta</h2><small id="nEnc"></small></div>
+      <div class="head"><h2 id="h-r"><span data-s="Mi ruta">Nuestra ruta</span></h2><small id="nEnc"></small></div>
       <div class="countdown">
         <div class="field" style="flex:1;min-width:180px"><label for="cita">Próximo encuentro</label><div class="inp"><input id="cita" class="np" type="date"></div></div>
         <b id="faltan"></b>
       </div>
       <ol class="enc" id="enc"></ol>
-      <p class="note">Toquen el círculo cuando tengan cada encuentro.</p>
+      <p class="note"><span data-s="Toca el círculo cuando tengas cada encuentro.">Toquen el círculo cuando tengan cada encuentro.</span></p>
       <div class="row"><button type="button" class="btn ghost" id="certOpen">🏅 Ver certificado del cierre</button></div>
     </section>
 
     <!-- Compromisos -->
     <section class="card" id="compCard" aria-labelledby="h-comp" hidden>
-      <div class="head"><h2 id="h-comp">Nuestros compromisos</h2><small id="nComp"></small></div>
+      <div class="head"><h2 id="h-comp"><span data-s="Mis compromisos">Nuestros compromisos</span></h2><small id="nComp"></small></div>
       <div class="mini"><i id="compBar" style="width:0%"></i></div>
       <div class="checks" id="checks"></div>
       <form class="addrow" id="addComp"><div class="inp"><input id="newComp" class="np" placeholder="Escriban otro compromiso" aria-label="Nuevo compromiso"></div><button type="submit" class="btn small">+ Agregar</button></form>
-      <p class="note">Ideas: no sacar deudas nuevas, pagar de contado, llevar el presupuesto en una libreta, orar juntos por las finanzas, abonar la prima a la deuda.</p>
+      <p class="note">Ideas: no sacar deudas nuevas, pagar de contado, llevar el presupuesto en una libreta, <span data-s="orar por mis finanzas">orar juntos por las finanzas</span>, abonar la prima a la deuda.</p>
     </section>
 
     <!-- Ventas -->
     <section class="card" id="sellCard" aria-labelledby="h-s" hidden>
-      <div class="head"><h2 id="h-s">Lo que no usamos y vamos a vender</h2><small id="nSell"></small></div>
-      <p class="sub">“Ve y vende el aceite, y paga a tus acreedores.” Solo lo que tienen guardado y no usan; lo que vendan va completo a la deuda que están atacando.</p>
-      <p class="rule"><b>La regla:</b> si no lo han usado en el último año, se vende. Lo que necesitan para la casa o para trabajar no se vende.</p>
+      <div class="head"><h2 id="h-s"><span data-s="Lo que no uso y voy a vender">Lo que no usamos y vamos a vender</span></h2><small id="nSell"></small></div>
+      <p class="sub">“Ve y vende el aceite, y paga a tus acreedores.” <span data-s="Solo lo que tienes guardado y no usas; lo que vendas va completo a la deuda que estás atacando.">Solo lo que tienen guardado y no usan; lo que vendan va completo a la deuda que están atacando.</span></p>
+      <p class="rule"><b>La regla:</b> <span data-s="si no lo has usado en el último año, se vende. Lo que necesitas para la casa o para trabajar no se vende.">si no lo han usado en el último año, se vende. Lo que necesitan para la casa o para trabajar no se vende.</span></p>
       <div class="sell-sum">
         <div><span>Meta de venta</span><b id="sMeta">$0</b></div>
-        <div class="g"><span>Ya vendimos</span><b id="sVend">$0</b></div>
+        <div class="g"><span><span data-s="Ya vendí">Ya vendimos</span></span><b id="sVend">$0</b></div>
       </div>
       <div class="mini"><i id="sellBar" style="width:0%"></i></div>
       <ul class="sells" id="sells"></ul>
@@ -388,14 +399,14 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
         <span class="lbl">Ideas de cosas que suelen estar guardadas</span>
         <div class="chips" id="chips"></div>
       </div>
-      <p class="note">Entreguen en un lugar público y solo cuando vean la plata en la cuenta: una captura de pantalla no es un pago.</p>
+      <p class="note"><span data-s="Entrega en un lugar público y solo cuando veas la plata en la cuenta:">Entreguen en un lugar público y solo cuando vean la plata en la cuenta:</span> una captura de pantalla no es un pago.</p>
     </section>
 
     <!-- Anotar el mes -->
     <section class="card" aria-labelledby="h-mes" id="mesCard" hidden>
       <div>
         <h2 id="h-mes">Anotar este mes</h2>
-        <p class="sub">Copien el saldo de cada deuda del extracto más reciente.</p>
+        <p class="sub"><span data-s="Copia el saldo de cada deuda del extracto más reciente.">Copien el saldo de cada deuda del extracto más reciente.</span></p>
       </div>
       <div class="field" style="max-width:240px"><label for="fecha">Fecha</label><div class="inp"><input id="fecha" class="np" type="date"></div></div>
       <div id="mesRows" style="display:grid;gap:10px"></div>
@@ -411,13 +422,14 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
 
     <!-- Deudas -->
     <details class="more" id="setupBox">
-      <summary>Nuestras deudas (al empezar)</summary>
+      <summary><span data-s="Mis deudas (al empezar)">Nuestras deudas (al empezar)</span></summary>
       <div class="body">
-        <div class="field"><label for="pareja">Nombre de la pareja</label><div class="inp"><input id="pareja" class="np" placeholder="Ej.: Andrés y Paola"></div></div>
+        <div class="field"><span class="lbl">¿Para quién es?</span><div class="seg" role="group" aria-label="Para quién es" style="max-width:360px"><button type="button" data-modo="pareja" aria-pressed="true">Pareja</button><button type="button" data-modo="persona" aria-pressed="false">Una persona</button></div></div>
+        <div class="field"><label for="pareja"><span data-s="Nombre">Nombre de la pareja</span></label><div class="inp"><input id="pareja" class="np" placeholder="Ej.: Andrés y Paola"></div></div>
         <div class="field" style="max-width:240px"><label for="inicio">Fecha de la asesoría</label><div class="inp"><input id="inicio" class="np" type="date"></div></div>
         <div id="setup" style="display:grid;gap:8px"></div>
         <div class="row"><button type="button" class="btn ghost small" id="addDebt">+ Agregar deuda</button><button type="button" class="btn small" id="saveSetup">Guardar deudas</button></div>
-        <p class="note">El saldo inicial es el del día de la asesoría. Si una deuda ya se pagó, no la borren: así se ve el avance.</p>
+        <p class="note">El saldo inicial es el del día de la asesoría. <span data-s="Si una deuda ya se pagó, no la borres:">Si una deuda ya se pagó, no la borren:</span> así se ve el avance.</p>
       </div>
     </details>
 
@@ -432,7 +444,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
       <details class="more">
         <summary>Copia de seguridad</summary>
         <div class="body">
-          <p class="note">Si cambian de celular o borran el navegador, se pierde lo anotado. Copien este texto y guárdenlo en WhatsApp o en una nota; para recuperarlo, péguenlo aquí y toquen “Restaurar”.</p>
+          <p class="note"><span data-s="Si cambias de celular o borras el navegador, se pierde lo anotado. Copia este texto y guárdalo en WhatsApp o en una nota; para recuperarlo, pégalo aquí y toca “Restaurar”.">Si cambian de celular o borran el navegador, se pierde lo anotado. Copien este texto y guárdenlo en WhatsApp o en una nota; para recuperarlo, péguenlo aquí y toquen “Restaurar”.</span></p>
           <textarea id="backup" aria-label="Copia de seguridad"></textarea>
           <div class="row"><button type="button" class="btn ghost small" id="copyBk">Copiar respaldo</button><button type="button" class="btn small" id="restore">Restaurar</button><button type="button" class="btn ghost small" id="reset">Borrar todo</button></div>
           <p class="note" id="resetAsk" hidden>¿Seguro? Se borra todo lo anotado en este celular. <button type="button" class="btn small" id="resetYes">Sí, borrar</button></p>
@@ -473,8 +485,17 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
   const monthsBetween = (a, b) => (b.getFullYear() - a.getFullYear()) * 12 + (b.getMonth() - a.getMonth()) + (b.getDate() - a.getDate()) / 30;
   const sh = v => v >= 1e6 ? '$' + (v / 1e6).toLocaleString('es-CO', { maximumFractionDigits: 1 }) + ' M' : '$' + Math.round(v / 1e3) + ' mil';
 
-  const BLANK = () => ({ pareja: '', inicio: '', debts: [], entries: [], checks: [{ t: '', ok: false }, { t: '', ok: false }, { t: '', ok: false }], cita: '', enc: [false, false, false, false, false], seen: [], ventas: [], extras: {} });
+  const BLANK = () => ({ pareja: '', inicio: '', debts: [], entries: [], checks: [{ t: '', ok: false }, { t: '', ok: false }, { t: '', ok: false }], cita: '', enc: [false, false, false, false, false], seen: [], ventas: [], extras: {}, modo: 'pareja' });
   let S = BLANK(), demo = false, saved = null;
+  const T = (pl, sg) => S.modo === 'persona' ? sg : pl;
+  function applyModo() {
+    document.querySelectorAll('[data-s]').forEach(el => { if (el.dataset.p == null) el.dataset.p = el.innerHTML; el.innerHTML = S.modo === 'persona' ? el.dataset.s : el.dataset.p; });
+    document.querySelectorAll('.seg button[data-modo]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.modo === (S.modo || 'pareja'))));
+    document.title = T('Nuestro avance', 'Mi avance');
+    $('pareja').placeholder = T('Ej.: Andrés y Paola', 'Ej.: Carlos Gómez');
+    $('newComp').placeholder = T('Escriban otro compromiso', 'Escribe otro compromiso');
+    $('newSell').placeholder = T('¿Qué más tienen guardado que no usan?', '¿Qué más tienes guardado que no usas?');
+  }
   function load() { try { const v = JSON.parse(localStorage.getItem(KEY)); if (v && Array.isArray(v.debts)) S = Object.assign(BLANK(), v); } catch (e) {} }
   function store() { if (demo) return; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 
@@ -552,6 +573,9 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
     store(); $('setupBox').open = false; render(); flash('Deudas guardadas.');
     $('hero').scrollIntoView();
   });
+  document.querySelectorAll('.seg button[data-modo]').forEach(b => b.addEventListener('click', () => {
+    S.modo = b.dataset.modo; if (S.debts.length) store(); renderSells(); render(true);
+  }));
   $('goSetup').addEventListener('click', () => { $('setupBox').open = true; $('setupBox').scrollIntoView({ behavior: 'smooth' }); setTimeout(() => $('pareja').focus(), 400); });
 
   // ---------- Anotar el mes ----------
@@ -569,7 +593,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
     S.entries.sort((a, b) => a.f < b.f ? -1 : 1);
     store(); render(true);
     const after = snapshot();
-    const msg = after.pagadas > before.pagadas ? '¡Pagaron una deuda! Gloria a Dios.' : after.hoy < before.hoy ? 'Mes guardado. Bajaron ' + fmt(before.hoy - after.hoy) + '. ¡Sigan así!' : 'Mes guardado.';
+    const msg = after.pagadas > before.pagadas ? T('¡Pagaron una deuda! Gloria a Dios.', '¡Pagaste una deuda! Gloria a Dios.') : after.hoy < before.hoy ? 'Mes guardado. ' + T('Bajaron ', 'Bajaste ') + fmt(before.hoy - after.hoy) + T('. ¡Sigan así!', '. ¡Sigue así!') : 'Mes guardado.';
     flash(msg);
     if (after.pagadas > before.pagadas || after.hoy < before.hoy) confetti(after.pagadas > before.pagadas ? 140 : 60);
     $('hero').scrollIntoView({ behavior: 'smooth' });
@@ -632,7 +656,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
       li.querySelector('.vs').addEventListener('change', e => {
         x.sold = e.target.checked; if (x.sold && !x.real) x.real = x.v;
         store(); renderSells(); render(true);
-        if (x.sold) { confetti(70); flash('¡Vendieron ' + (x.n || 'algo') + '! Abónenlo completo a la deuda.'); }
+        if (x.sold) { confetti(70); flash(T('¡Vendieron ', '¡Vendiste ') + (x.n || 'algo') + T('! Abónenlo completo a la deuda.', '! Abónalo completo a la deuda.')); }
       });
       const vr = li.querySelector('.vr');
       if (vr) { vr.addEventListener('input', e => { x.real = digits(e.target.value); store(); sellTotals(); }); vr.addEventListener('blur', e => { e.target.value = dots(digits(e.target.value)); }); }
@@ -667,8 +691,8 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
       const st = S.extras[e.key] || {};
       return '<li class="extra' + (st.ok ? ' ok' : '') + '"><div class="cal"><b>' + e.date.getDate() + '</b><span>' + MESES[e.m] + '</span></div>' +
         '<div class="t"><span>' + e.t + '</span><small>' + (st.ok ? '¡Abonado!' : e.dias === 0 ? 'Hoy' : 'en ' + e.dias + ' días') + '</small></div><div class="d">' + e.x + '</div>' +
-        '<div class="act"><div class="inp"><span class="pre">Abonar $</span><input inputmode="numeric" data-k="' + e.key + '" class="xp" aria-label="Cuánto van a abonar de ' + e.t + '" value="' + dots(st.p || 0) + '" placeholder="0"></div>' +
-        '<label><input type="checkbox" class="xo" data-k="' + e.key + '"' + (st.ok ? ' checked' : '') + '> Ya lo abonamos</label></div></li>';
+        '<div class="act"><div class="inp"><span class="pre">Abonar $</span><input inputmode="numeric" data-k="' + e.key + '" class="xp" aria-label="' + T('Cuánto van a abonar de ', 'Cuánto vas a abonar de ') + e.t + '" value="' + dots(st.p || 0) + '" placeholder="0"></div>' +
+        '<label><input type="checkbox" class="xo" data-k="' + e.key + '"' + (st.ok ? ' checked' : '') + '> ' + T('Ya lo abonamos', 'Ya lo aboné') + '</label></div></li>';
     }).join('');
     $('extras').querySelectorAll('.xp').forEach(inp => {
       inp.addEventListener('input', () => { const k = inp.dataset.k; S.extras[k] = Object.assign(S.extras[k] || {}, { p: digits(inp.value) }); store(); extraTotals(); });
@@ -676,11 +700,11 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
     });
     $('extras').querySelectorAll('.xo').forEach(cb => cb.addEventListener('change', () => {
       const k = cb.dataset.k; S.extras[k] = Object.assign(S.extras[k] || {}, { ok: cb.checked }); store(); renderExtras();
-      if (cb.checked) { confetti(60); flash('¡Abonaron la plata extra! Así se acorta el camino.'); }
+      if (cb.checked) { confetti(60); flash(T('¡Abonaron la plata extra!', '¡Abonaste la plata extra!') + ' Así se acorta el camino.'); }
     }));
     const n = L[0], st = S.extras[n.key] || {};
     $('extraAlert').hidden = !(n.dias <= 45 && !st.ok);
-    if (n.dias <= 45 && !st.ok) $('extraAlert').textContent = '¡' + n.a + '! ' + (n.dias === 0 ? 'Es hoy.' : 'Faltan ' + n.dias + ' días.') + (st.p ? ' Acordaron abonar ' + fmt(st.p) + '.' : ' Decidan ya cuánto va a la deuda.');
+    if (n.dias <= 45 && !st.ok) $('extraAlert').textContent = '¡' + n.a + '! ' + (n.dias === 0 ? 'Es hoy.' : 'Faltan ' + n.dias + ' días.') + (st.p ? T(' Acordaron abonar ', ' Acordaste abonar ') + fmt(st.p) + '.' : T(' Decidan ya cuánto va a la deuda.', ' Decide ya cuánto va a la deuda.'));
     extraTotals();
   }
   function extraTotals() {
@@ -703,13 +727,13 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
       '<div class="kick">' + (libres ? 'Certificado de libertad financiera' : 'Reconocimiento de avance') + '</div>' +
       '<h2>' + (libres ? '¡Libres de deudas!' : 'Fieles en el plan') + '</h2>' +
       '<p class="why" style="margin-top:6px">Se otorga a</p>' +
-      '<div class="who">' + esc(S.pareja || 'Nuestra pareja') + '</div>' +
+      '<div class="who">' + esc(S.pareja || T('Esta pareja', 'Esta persona')) + '</div>' +
       '<p class="why">' + (libres
-        ? 'por pagar todas sus deudas, trabajando juntos y con fidelidad, durante ' + meses + (meses === 1 ? ' mes' : ' meses') + ' de acompañamiento.'
-        : 'por su constancia en el plan para salir de deudas: en ' + meses + (meses === 1 ? ' mes' : ' meses') + ' abonaron ' + fmt(pagado) + (terminadas ? ' y terminaron ' + terminadas + (terminadas === 1 ? ' deuda' : ' deudas') : '') + '. El camino sigue, y ya demostraron que pueden.') + '</p>' +
+        ? T('por pagar todas sus deudas, trabajando juntos y con fidelidad, durante ', 'por pagar todas sus deudas, con disciplina y fidelidad, durante ') + meses + (meses === 1 ? ' mes' : ' meses') + ' de acompañamiento.'
+        : 'por su constancia en el plan para salir de deudas: en ' + meses + (meses === 1 ? ' mes' : ' meses') + T(' abonaron ', ' abonó ') + fmt(pagado) + (terminadas ? T(' y terminaron ', ' y terminó ') + terminadas + (terminadas === 1 ? ' deuda' : ' deudas') : '') + T('. El camino sigue, y ya demostraron que pueden.', '. El camino sigue, y ya demostró que puede.')) + '</p>' +
       '<div class="nums">' + nums.map(n => '<div><b>' + n[0] + '</b><span>' + n[1] + '</span></div>').join('') + '</div>' +
       '<p class="vs">“Ve y vende el aceite, y paga a tus acreedores, y tú y tus hijos vivid de lo que quede.” <cite>2 Reyes 4:7</cite></p>' +
-      '<div class="sign"><div>F&amp;T Asesorías</div><span class="seal">F&amp;T</span><div>' + esc(S.pareja || 'La pareja') + '</div></div>' +
+      '<div class="sign"><div>F&amp;T Asesorías</div><span class="seal">F&amp;T</span><div>' + esc(S.pareja || T('La pareja', 'Firma')) + '</div></div>' +
       '<div class="fecha">' + fechaHoy + '</div>';
   }
   $('certOpen').addEventListener('click', () => { $('certBody').innerHTML = certHTML(); $('certWrap').hidden = false; document.body.style.overflow = 'hidden'; $('certPrint').focus(); });
@@ -729,7 +753,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
     $('cita').value = S.cita || '';
     if (S.cita) {
       const d = Math.round((pd(S.cita) - pd(today())) / 864e5);
-      $('faltan').textContent = d > 1 ? 'Faltan ' + d + ' días' : d === 1 ? '¡Es mañana!' : d === 0 ? '¡Es hoy!' : 'Ya pasó: agenden el siguiente';
+      $('faltan').textContent = d > 1 ? 'Faltan ' + d + ' días' : d === 1 ? '¡Es mañana!' : d === 0 ? '¡Es hoy!' : T('Ya pasó: agenden el siguiente', 'Ya pasó: agenda el siguiente');
     } else $('faltan').textContent = '';
   }
   $('cita').addEventListener('change', e => { S.cita = e.target.value; store(); renderRuta(); });
@@ -737,6 +761,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
   // ---------- Avance ----------
   let ringPrev = 0;
   function render(animate) {
+    applyModo();
     const has = S.debts.length > 0;
     $('welcome').hidden = has;
     ['hero', 'debtsCard', 'badgesCard', 'extraCard', 'rutaCard', 'compCard', 'sellCard', 'mesCard', 'histCard', 'dock'].forEach(id => $(id).hidden = !has);
@@ -744,7 +769,9 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
     $('hello').hidden = !S.pareja; $('hello').textContent = S.pareja ? 'Hola, ' + S.pareja : '';
     const mes = has ? Math.max(1, Math.floor(monthsBetween(startDate(), new Date())) + 1) : 0;
     $('mesPill').hidden = !has; $('mesPill').textContent = mes <= 6 ? 'Mes ' + mes + ' de 6' : 'Mes ' + mes;
-    const v = VERSOS[(Math.max(1, mes) - 1) % VERSOS.length];
+    let v = VERSOS[(Math.max(1, mes) - 1) % VERSOS.length];
+    if (S.modo === 'persona' && v[1] === 'Eclesiastés 4:9') v = ['Encomienda a Jehová tus obras, y tus pensamientos serán afirmados.', 'Proverbios 16:3'];
+    if (S.modo === 'persona' && v[1] === 'Amós 3:3') v = ['El que es fiel en lo muy poco, también en lo más es fiel.', 'Lucas 16:10'];
     $('vText').textContent = v[0]; $('vRef').textContent = v[1];
     if (!has) { $('focus').hidden = true; $('celebrate').hidden = true; return; }
     renderMes();
@@ -752,13 +779,13 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
     const ini = iniTotal(), cur = current(), hoy = tot(cur);
     const pct = ini ? Math.max(0, Math.min(100, (ini - hoy) / ini * 100)) : 0;
     $('pct').textContent = Math.round(pct) + '%';
-    $('ringBox').setAttribute('aria-label', 'Han pagado el ' + Math.round(pct) + ' %');
+    $('ringBox').setAttribute('aria-label', T('Han pagado el ', 'Has pagado el ') + Math.round(pct) + ' %');
     const C = 389.56;
     $('ringVal').style.strokeDashoffset = C * (1 - (animate ? pct : ringPrev) / 100);
     if (!animate) requestAnimationFrame(() => requestAnimationFrame(() => { $('ringVal').style.strokeDashoffset = C * (1 - pct / 100); }));
     ringPrev = pct;
     $('bajado').textContent = fmt(Math.max(0, ini - hoy));
-    $('deben').textContent = 'Deben hoy ' + fmt(hoy) + ' de ' + fmt(ini);
+    $('deben').textContent = T('Deben hoy ', 'Debes hoy ') + fmt(hoy) + ' de ' + fmt(ini);
 
     const pag = S.debts.map((d, j) => d.ini > 0 && (cur[j] || 0) <= 0);
     const pagadas = pag.filter(Boolean).length;
@@ -777,8 +804,8 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
 
     $('celebrate').hidden = !pagadas;
     if (pagadas) $('celebrate').innerHTML = '<span class="ic" aria-hidden="true">🎉</span><span>' + (pagadas === S.debts.length
-      ? '¡Gloria a Dios! <b>Pagaron todas las deudas.</b> “Tú y tus hijos vivid de lo que quede.”'
-      : '¡Celebren! Ya pagaron: <b>' + S.debts.filter((d, j) => pag[j]).map(d => esc(d.n)).join(', ') + '</b>. Pasen esa cuota a la siguiente deuda.') + '</span>';
+      ? T('¡Gloria a Dios! <b>Pagaron todas las deudas.</b>', '¡Gloria a Dios! <b>Pagaste todas las deudas.</b>') + ' “Tú y tus hijos vivid de lo que quede.”'
+      : T('¡Celebren! Ya pagaron: <b>', '¡Celebra! Ya pagaste: <b>') + S.debts.filter((d, j) => pag[j]).map(d => esc(d.n)).join(', ') + T('</b>. Pasen esa cuota a la siguiente deuda.', '</b>. Pasa esa cuota a la siguiente deuda.')) + '</span>';
 
     // deuda a atacar: la de menor saldo que siga viva (bola de nieve)
     const vivos = S.debts.map((d, j) => j).filter(j => (cur[j] || 0) > 0).sort((a, b) => cur[a] - cur[b]);
@@ -829,7 +856,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
     if (pts.length > 1) { const lp = pts[pts.length - 1], lx = x(pts.length - 1), ly = y(lp.v); s += '<text x="' + (lx - 12) + '" y="' + (ly - 14) + '" text-anchor="end" font-size="20" font-weight="700" fill="var(--ink)" font-family="Inter, sans-serif">' + sh(lp.v) + '</text>'; }
     const step = Math.max(1, Math.ceil(pts.length / 5));
     pts.forEach((p, i) => { if (i % step === 0 || i === pts.length - 1) s += '<text x="' + x(i) + '" y="' + (H - 8) + '" text-anchor="' + (pts.length < 2 ? 'middle' : i === 0 ? 'start' : i === pts.length - 1 ? 'end' : 'middle') + '" font-size="19" fill="var(--muted)" font-family="Inter, sans-serif">' + esc(p.f) + '</text>'; });
-    if (pts.length < 2) s += '<text x="' + (L + (W - L - R) / 2) + '" y="' + (y(ini) + 34) + '" text-anchor="middle" font-size="19" fill="var(--muted)" font-family="Inter, sans-serif">Anoten el primer mes para ver la línea</text>';
+    if (pts.length < 2) s += '<text x="' + (L + (W - L - R) / 2) + '" y="' + (y(ini) + 34) + '" text-anchor="middle" font-size="19" fill="var(--muted)" font-family="Inter, sans-serif">' + (S.modo === 'persona' ? 'Anota' : 'Anoten') + ' el primer mes para ver la línea</text>';
     $('chart').innerHTML = s;
   }
 
@@ -838,19 +865,19 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
     let prev = iniTotal();
     let rows = [];
     S.entries.forEach((e, k) => { const t = tot(saldosAt(k)); rows.push('<tr><td>' + fechaTxt(e.f) + '</td><td>' + fmt(t) + '</td><td>' + (prev - t >= 0 ? '<span class="up">−' + fmt(prev - t) + '</span>' : '<span class="dn">+' + fmt(t - prev) + '</span>') + '</td></tr>'); prev = t; });
-    $('hist').innerHTML = '<thead><tr><th>Fecha</th><th>Deben</th><th>Cambio</th></tr></thead><tbody>' + rows.reverse().join('') + '</tbody>';
+    $('hist').innerHTML = '<thead><tr><th>Fecha</th><th>Saldo</th><th>Cambio</th></tr></thead><tbody>' + rows.reverse().join('') + '</tbody>';
   }
 
   function resumen() {
     const ini = iniTotal(), cur = current(), hoy = tot(cur);
     const L = ['AVANCE' + (S.pareja ? ' DE ' + S.pareja.toUpperCase() : ''), ''];
-    L.push('Debíamos: ' + fmt(ini), 'Debemos hoy: ' + fmt(hoy), 'Hemos pagado: ' + (ini ? Math.round((ini - hoy) / ini * 100) : 0) + ' %', '');
+    L.push(T('Debíamos: ', 'Debía: ') + fmt(ini), T('Debemos hoy: ', 'Debo hoy: ') + fmt(hoy), T('Hemos pagado: ', 'He pagado: ') + (ini ? Math.round((ini - hoy) / ini * 100) : 0) + ' %', '');
     S.debts.forEach((d, j) => L.push('• ' + d.n + ': ' + ((cur[j] || 0) <= 0 && d.ini > 0 ? '¡pagada!' : fmt(cur[j] || 0))));
     const ch = S.checks.filter(c => c.t);
     if (ch.length) { L.push('', 'Compromisos:'); ch.forEach(c => L.push((c.ok ? '✔ ' : '○ ') + c.t)); }
     if (S.ventas.length) {
       const vend = S.ventas.filter(x => x.sold).reduce((a, x) => a + (x.real || x.v), 0);
-      L.push('', 'Lo que no usamos y vamos a vender (vendido ' + fmt(vend) + '):');
+      L.push('', T('Lo que no usamos y vamos a vender (vendido ', 'Lo que no uso y voy a vender (vendido ') + fmt(vend) + '):');
       S.ventas.forEach(x => L.push((x.sold ? '✔ ' : '○ ') + (x.n || 'Sin nombre') + ' · ' + (x.sold ? 'vendido en ' + fmt(x.real || x.v) : fmt(x.v) + ' en ' + x.w)));
     }
     const abx = Object.values(S.extras || {}).filter(x => x.ok).reduce((a, x) => a + (x.p || 0), 0);
@@ -909,6 +936,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
   function applyPlan(v) {
     const checks = (v.checks || []).filter(c => c && c.t).map(c => ({ t: String(c.t), ok: false }));
     S = Object.assign(BLANK(), {
+      modo: v.modo === 'persona' ? 'persona' : 'pareja',
       pareja: String(v.pareja || ''), inicio: v.inicio || today(), cita: v.cita || '',
       debts: v.debts.map(d => ({ n: String(d.n || 'Deuda'), ini: Number(d.ini) || 0 })).filter(d => d.ini > 0),
       ventas: (v.ventas || []).map(x => ({ n: String(x.n || ''), v: Number(x.v) || 0, w: String(x.w || 'Facebook Marketplace'), sold: !!x.sold, real: Number(x.real) || 0 })),
@@ -916,7 +944,7 @@ textarea { width: 100%; min-height: 90px; border: 1.5px solid var(--line); borde
     });
     store(); clearHash(); $('importBar').hidden = true;
     renderSetup(); renderChecks(); renderSells(); render();
-    window.scrollTo(0, 0); flash('¡Bienvenidos! Su plan quedó guardado en este celular.'); confetti(90);
+    window.scrollTo(0, 0); flash(T('¡Bienvenidos! Su plan quedó guardado en este celular.', '¡Bienvenido! Tu plan quedó guardado en este celular.')); confetti(90);
   }
   const incoming = readPlan();
 

@@ -155,9 +155,9 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
 <body>
 <header class="top">
   <div class="wrap">
-    <div class="brand">F&amp;T Asesorías · Asesoría financiera para parejas</div>
+    <div class="brand">F&amp;T Asesorías · <span data-s="Asesoría financiera personal">Asesoría financiera para parejas</span></div>
     <h1>Plan para salir de deudas</h1>
-    <p class="intro">Para hacer la asesoría con la pareja: anoten juntos ingresos, gastos y deudas, miren el diagnóstico, hagan la lista de lo que pueden vender y elijan en qué orden pagarlas. Los números de ejemplo ya están puestos; cámbienlos por los suyos. Nada se guarda ni se envía. Para el crédito de vivienda usa el <a href="./">simulador “El peso de la deuda”</a>, y para el acompañamiento mensual, <a href="seguimiento.html">“Nuestro avance”</a>.</p>
+    <p class="intro"><span data-s="Para hacer la asesoría con la persona: anoten juntos ingresos, gastos y deudas, miren el diagnóstico, hagan la lista de lo que puede vender y elijan en qué orden pagarlas. Los números de ejemplo ya están puestos; cámbialos por los suyos.">Para hacer la asesoría con la pareja: anoten juntos ingresos, gastos y deudas, miren el diagnóstico, hagan la lista de lo que pueden vender y elijan en qué orden pagarlas. Los números de ejemplo ya están puestos; cámbienlos por los suyos.</span> Nada se guarda ni se envía. Para el crédito de vivienda usa el <a href="./">simulador “El peso de la deuda”</a>, y para el acompañamiento mensual, <a href="seguimiento.html"><span data-s="“Mi avance”&lt;/a&gt;.&lt;/p&gt;">“Nuestro avance”</a>.</p></span>
   </div>
 </header>
 
@@ -165,13 +165,20 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
   <div class="wrap">
     <!-- 1 -->
     <section class="step" aria-labelledby="h1s">
-      <div class="step-head"><span class="num">1</span><div><h2 id="h1s">Ingresos y gastos del mes</h2><p>De los dos: lo que entra a la casa entre ambos.</p></div></div>
-      <div class="field" style="max-width:420px"><label for="pareja">Nombre de la pareja</label><div class="inp"><input id="pareja" class="np" placeholder="Ej.: Andrés y Paola"></div></div>
+      <div class="step-head"><span class="num">1</span><div><h2 id="h1s">Ingresos y gastos del mes</h2><p><span data-s="Todo lo que te entra al mes.">De los dos: lo que entra a la casa entre ambos.</span></p></div></div>
+      <div class="field noprint">
+        <span class="lbl">¿Para quién es la asesoría?</span>
+        <div class="seg" role="group" aria-label="Para quién es la asesoría" style="max-width:420px">
+          <button type="button" data-modo="pareja" aria-pressed="true">Pareja</button>
+          <button type="button" data-modo="persona" aria-pressed="false">Una persona</button>
+        </div>
+      </div>
+      <div class="field" style="max-width:420px"><label for="pareja"><span data-s="Nombre">Nombre de la pareja</span></label><div class="inp"><input id="pareja" class="np" placeholder="Ej.: Andrés y Paola"></div></div>
       <div class="grid2" id="gridIng">
         <div class="box">
           <h3>Ingresos</h3>
-          <div class="field"><label for="i1">Ingresos de él</label><div class="inp"><span class="pre">$</span><input id="i1" class="m" inputmode="numeric" value="3.200.000"></div></div>
-          <div class="field"><label for="i2">Ingresos de ella</label><div class="inp"><span class="pre">$</span><input id="i2" class="m" inputmode="numeric" value="1.300.000"></div></div>
+          <div class="field"><label for="i1"><span data-s="Sueldo o ingreso principal">Ingresos de él</span></label><div class="inp"><span class="pre">$</span><input id="i1" class="m" inputmode="numeric" value="3.200.000"></div></div>
+          <div class="field"><label for="i2"><span data-s="Otro ingreso fijo (pensión, arriendo…)">Ingresos de ella</span></label><div class="inp"><span class="pre">$</span><input id="i2" class="m" inputmode="numeric" value="1.300.000"></div></div>
           <div class="field"><label for="i3">Negocio, trabajos extra u otros</label><div class="inp"><span class="pre">$</span><input id="i3" class="m" inputmode="numeric" placeholder="0"></div></div>
           <div class="sum"><span>Total ingresos</span><span id="tIng"></span></div>
         </div>
@@ -184,7 +191,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
       </div>
       <div class="box" style="background:var(--accent-soft)">
         <h3>Gastos que llegan una vez al año</h3>
-        <p class="hint" style="font-size:14px;color:var(--ink-2)">Son los que desbaratan el presupuesto porque “no estaban en la cuenta”. Escriban lo que pagan en el año y la página calcula cuánto apartar cada mes para que no les toque endeudarse cuando lleguen.</p>
+        <p class="hint" style="font-size:14px;color:var(--ink-2)">Son los que desbaratan el presupuesto porque “no estaban en la cuenta”. <span data-s="Escribe lo que pagas en el año y la página calcula cuánto apartar cada mes para que no te toque endeudarte cuando lleguen.">Escriban lo que pagan en el año y la página calcula cuánto apartar cada mes para que no les toque endeudarse cuando lleguen.</span></p>
         <div class="grid4" id="anual" style="grid-template-columns:repeat(3,minmax(0,1fr));align-items:end"></div>
         <div class="sum"><span>Al año <span id="tAnu"></span> · apartar cada mes</span><span id="tAnuM"></span></div>
         <p class="hint">Lo que apartan cada mes ya queda sumado en el total de gastos.</p>
@@ -193,7 +200,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
 
     <!-- 2 -->
     <section class="step" aria-labelledby="h2s">
-      <div class="step-head"><span class="num">2</span><div><h2 id="h2s">Las deudas</h2><p>Las de los dos, sin esconder ninguna: banco, tarjetas, almacenes, celular a cuotas y préstamos con personas.</p></div></div>
+      <div class="step-head"><span class="num">2</span><div><h2 id="h2s">Las deudas</h2><p><span data-s="Todas, sin esconder ninguna:">Las de los dos, sin esconder ninguna:</span> banco, tarjetas, almacenes, celular a cuotas y préstamos con personas.</p></div></div>
       <div class="debts" id="debts"></div>
       <div class="row noprint"><button type="button" class="btn ghost" id="add">+ Agregar deuda</button></div>
       <p class="hint">La tasa está en el extracto: “mensual” (M.V.) en tarjetas y almacenes, “anual” (E.A.) en créditos. Un préstamo sin intereses lleva 0.</p>
@@ -213,11 +220,11 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
 
     <!-- 4 -->
     <section class="step" aria-labelledby="h4v">
-      <div class="step-head"><span class="num">4</span><div><h2 id="h4v">¿Qué tienen en casa?</h2><p>Lo que tienen guardado y no usan también puede pagar deudas. Recorran la casa juntos y anoten solo eso.</p></div></div>
+      <div class="step-head"><span class="num">4</span><div><h2 id="h4v"><span data-s="¿Qué tienes en casa?">¿Qué tienen en casa?</span></h2><p><span data-s="Lo que tienes guardado y no usas también puede pagar deudas. Recorre la casa y anota solo eso.">Lo que tienen guardado y no usan también puede pagar deudas. Recorran la casa juntos y anoten solo eso.</span></p></div></div>
       <p class="verse">“¿Qué tienes en casa?” Y ella dijo: “Tu sierva ninguna cosa tiene en casa, sino una vasija de aceite.” … “Ve y vende el aceite, y paga a tus acreedores.” — 2 Reyes 4:2, 7</p>
       <div class="field noprint">
-        <p class="hint" style="font-size:14px;color:var(--ink-2)"><b>La regla:</b> si no lo han usado en el último año, se vende. Lo que necesitan para la casa o para trabajar no se vende.</p>
-        <span class="lbl">Ideas de cosas que suelen estar guardadas (toquen para agregar)</span>
+        <p class="hint" style="font-size:14px;color:var(--ink-2)"><b>La regla:</b> <span data-s="si no lo has usado en el último año, se vende. Lo que necesitas para la casa o para trabajar no se vende.">si no lo han usado en el último año, se vende. Lo que necesitan para la casa o para trabajar no se vende.</span></p>
+        <span class="lbl">Ideas de cosas que suelen estar guardadas <span data-s="(toca para agregar)">(toquen para agregar)</span></span>
         <div class="chips" id="chips"></div>
       </div>
       <div class="items" id="items"></div>
@@ -237,16 +244,16 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
               <tr><td>Facebook Marketplace</td><td>Muebles, electrodomésticos, cosas grandes, cosas del bebé</td><td>Venta en su ciudad, sin comisión. Publiquen también en los grupos de compraventa del municipio.</td></tr>
               <tr><td>WhatsApp</td><td>Cualquier cosa</td><td>Estados y grupos de familia, trabajo o célula. Es lo más rápido para lo que conoce la gente cercana.</td></tr>
               <tr><td>Mercado Libre</td><td>Celulares, tecnología, consolas, herramientas y cosas pequeñas</td><td>Llega a todo el país con envío. Cobra comisión por venta: súmela al precio.</td></tr>
-              <tr><td>TuCarro</td><td>Carro o moto</td><td>Si tienen un vehículo de más, es la venta que más mueve la deuda.</td></tr>
+              <tr><td>TuCarro</td><td>Carro o moto</td><td><span data-s="Si tienes un vehículo de más,">Si tienen un vehículo de más,</span> es la venta que más mueve la deuda.</td></tr>
               <tr><td>GoTrendier</td><td>Ropa, zapatos y accesorios</td><td>Fotos claras con talla y estado.</td></tr>
-              <tr><td>Decathlon Segunda Vida</td><td>Bicicletas y artículos deportivos</td><td>Pagan con bono de la tienda, no en efectivo: sirve solo si de todas formas iban a comprar allí.</td></tr>
+              <tr><td>Decathlon Segunda Vida</td><td>Bicicletas y artículos deportivos</td><td>Pagan con bono de la tienda, no en efectivo: <span data-s="sirve solo si de todas formas ibas a comprar allí.">sirve solo si de todas formas iban a comprar allí.</span></td></tr>
             </tbody>
           </table>
         </div>
         <ul class="rules">
-          <li><b>Precio:</b> busquen el mismo artículo usado en Marketplace o Mercado Libre y pongan un precio un poco por debajo para que salga rápido.</li>
-          <li><b>Seguridad:</b> entreguen en un lugar público o en la portería, y no entreguen hasta ver la plata en la cuenta. Una captura de pantalla no es un pago.</li>
-          <li><b>No empeñen:</b> la compraventa con pacto de retroventa es otra deuda con intereses altos.</li>
+          <li><b>Precio:</b> <span data-s="busca el mismo artículo usado en Marketplace o Mercado Libre y pon un precio un poco por debajo para que salga rápido.">busquen el mismo artículo usado en Marketplace o Mercado Libre y pongan un precio un poco por debajo para que salga rápido.</span></li>
+          <li><b>Seguridad:</b> <span data-s="entrega en un lugar público o en la portería, y no entregues hasta ver la plata en la cuenta.">entreguen en un lugar público o en la portería, y no entreguen hasta ver la plata en la cuenta.</span> Una captura de pantalla no es un pago.</li>
+          <li><b><span data-s="No empeñes:">No empeñen:</span></b> la compraventa con pacto de retroventa es otra deuda con intereses altos.</li>
           <li><b>Todo va a la deuda:</b> lo que entre por la venta se abona completo, no se gasta en el mes.</li>
         </ul>
       </div>
@@ -298,10 +305,10 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
 
     <!-- 6 -->
     <section class="step" aria-labelledby="h6s">
-      <div class="step-head"><span class="num">6</span><div><h2 id="h6s">Compromisos y acompañamiento</h2><p>Tres compromisos escritos y la fecha del primer encuentro. Luego, el plan se va con ellos al celular.</p></div></div>
+      <div class="step-head"><span class="num">6</span><div><h2 id="h6s">Compromisos y acompañamiento</h2><p>Tres compromisos escritos y la fecha del primer encuentro. <span data-s="Luego, el plan se va con la persona al celular.">Luego, el plan se va con ellos al celular.</span></p></div></div>
       <div class="grid2" id="gridComp">
         <div class="box">
-          <h3>Nuestros compromisos</h3>
+          <h3><span data-s="Mis compromisos">Nuestros compromisos</span></h3>
           <div id="comps" style="display:grid;gap:8px"></div>
           <div class="row noprint"><button type="button" class="btn ghost" id="addComp" style="min-height:40px;padding:8px 12px;font-size:14px">+ Otro compromiso</button></div>
         </div>
@@ -312,10 +319,10 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
         </div>
       </div>
       <div class="box noprint" style="background:var(--accent-soft)">
-        <h3>Llevar a “Nuestro avance”</h3>
-        <p class="hint" style="font-size:14px;color:var(--ink-2)">Envíenle este link a la pareja. Al abrirlo en su celular, quedan anotadas sus deudas, los compromisos, lo que van a vender y la fecha del encuentro. No tienen que escribir nada otra vez.</p>
+        <h3><span data-s="Llevar a “Mi avance”">Llevar a “Nuestro avance”</span></h3>
+        <p class="hint" style="font-size:14px;color:var(--ink-2)"><span data-s="Envíale este link a la persona. Al abrirlo en su celular, quedan anotadas sus deudas, los compromisos, lo que va a vender y la fecha del encuentro. No tiene que escribir nada otra vez.">Envíenle este link a la pareja. Al abrirlo en su celular, quedan anotadas sus deudas, los compromisos, lo que van a vender y la fecha del encuentro. No tienen que escribir nada otra vez.</span></p>
         <div class="row">
-          <a class="btn" id="sendLink" href="https://wa.me/" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center">Enviar a la pareja por WhatsApp</a>
+          <a class="btn" id="sendLink" href="https://wa.me/" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center"><span data-s="Enviar a la persona por WhatsApp">Enviar a la pareja por WhatsApp</span></a>
           <button type="button" class="btn ghost" id="copyLink">Copiar link</button>
           <a class="btn ghost" id="openLink" href="seguimiento.html" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center">Abrir aquí</a>
         </div>
@@ -474,7 +481,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
       : carga > 0.4 ? 'Más del 40 % de lo que entra se va en cuotas. Es una carga alta: el plan debe empezar ya y no sacar deudas nuevas.'
       : carga > 0.3 ? 'La carga está por encima del promedio de los hogares colombianos (27 %). Hay margen para mejorar con un plan.'
       : 'La carga está en un nivel manejable. Con un abono constante pueden salir pronto.';
-    $('extraHint').textContent = libre > 0 ? 'Después de gastos y cuotas quedan ' + fmt(libre) + ' al mes.' : 'Hoy no queda dinero libre: busquen vasijas (gastos que se puedan recortar).';
+    $('extraHint').textContent = libre > 0 ? 'Después de gastos y cuotas quedan ' + fmt(libre) + ' al mes.' : T('Hoy no queda dinero libre: busquen vasijas (gastos que se puedan recortar).', 'Hoy no queda dinero libre: busca vasijas (gastos que se puedan recortar).');
 
     const extra = digits($('extra').value);
     $('mHint').textContent = method === 'nieve' ? 'Primero la deuda más pequeña: victorias rápidas que dan ánimo.' : 'Primero la deuda con la tasa más alta: se pagan menos intereses.';
@@ -491,7 +498,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
       $('vGainS').textContent = gainM > 0 ? 'y ' + fmt(gainI) + ' menos en intereses' : 'menos en intereses';
       $('saleHint').textContent = 'Incluye un abono único de ' + fmt(lump) + ' por la venta de lo que no usan, que va primero a ' + debts[ord[0]].name + '.';
     } else {
-      $('vGain').textContent = '—'; $('vGainS').textContent = sale.total > 0 ? 'activen el abono en el plan' : 'anoten algo para vender'; $('saleHint').textContent = '';
+      $('vGain').textContent = '—'; $('vGainS').textContent = sale.total > 0 ? T('activen el abono en el plan', 'activa el abono en el plan') : T('anoten algo para vender', 'anota algo para vender'); $('saleHint').textContent = '';
     }
     $('pTiempo').textContent = plan.stuck ? 'Más de 50 años' : tiempo(plan.months);
     $('pFecha').textContent = plan.stuck ? 'revisa las cuotas' : 'hacia ' + mesAno(plan.months);
@@ -512,8 +519,8 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
       });
       const f = debts[ord[0]];
       $('abonoA').hidden = false;
-      $('abonoA').innerHTML = '<p class="now">Cada mes paguen la cuota mínima de todas, y el abono extra' + (extra ? ' de <b>' + fmt(extra) + '</b>' : '') + ' va completo a <b>' + esc(f.name) + '</b>' + (lump ? ', más ' + fmt(lump) + ' de lo que vendan' : '') + '. Con su cuota, a esa deuda le entran ' + fmt(f.c + extra) + ' al mes.</p>' +
-        '<p class="hint" style="margin:0">' + (method === 'nieve' ? 'Es la de menor saldo (bola de nieve).' : 'Es la de tasa más alta (avalancha).') + ' Cuando la terminen, ese abono más su cuota pasa a la siguiente, y así crece:</p>' +
+      $('abonoA').innerHTML = '<p class="now">' + T('Cada mes paguen', 'Cada mes paga') + ' la cuota mínima de todas, y el abono extra' + (extra ? ' de <b>' + fmt(extra) + '</b>' : '') + ' va completo a <b>' + esc(f.name) + '</b>' + (lump ? ', más ' + fmt(lump) + T(' de lo que vendan', ' de lo que vendas') : '') + '. Con su cuota, a esa deuda le entran ' + fmt(f.c + extra) + ' al mes.</p>' +
+        '<p class="hint" style="margin:0">' + (method === 'nieve' ? 'Es la de menor saldo (bola de nieve).' : 'Es la de tasa más alta (avalancha).') + ' ' + T('Cuando la terminen', 'Cuando la termines') + ', ese abono más su cuota pasa a la siguiente, y así crece:</p>' +
         '<ol class="snow">' + html + '</ol>';
     } else { $('abonoA').hidden = true; }
     const row = (name, s, sel) => '<tr' + (sel ? ' class="sel"' : '') + '><td>' + name + '</td><td>' + (s.stuck ? '+600' : s.months) + '</td><td>' + fmt(s.interest) + '</td><td>' + fmt(s.total) + '</td></tr>';
@@ -530,7 +537,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
       'Ingresos: ' + fmt(ing) + ' · Gastos: ' + fmt(gas) + ' · Cuotas: ' + fmt(cuotas),
       ...(anuM ? ['Gastos del año: ' + fmt(anuM * 12) + ' → apartar ' + fmt(anuM) + ' al mes'] : []),
       'Deuda total: ' + fmt(deuda) + ' · Carga: ' + Math.round(carga * 100) + ' % · Libre: ' + fmt(libre), '',
-      'Método: ' + (method === 'nieve' ? 'bola de nieve' : 'avalancha') + ' · Abono extra: ' + fmt(extra) + ' al mes', 'El abono extra va a: ' + debts[ord[0]].name + '. Cuando la terminen, pasa a la siguiente.'];
+      'Método: ' + (method === 'nieve' ? 'bola de nieve' : 'avalancha') + ' · Abono extra: ' + fmt(extra) + ' al mes', 'El abono extra va a: ' + debts[ord[0]].name + '. ' + T('Cuando la terminen', 'Cuando la termines') + ', pasa a la siguiente.'];
     if (sale.list.length) {
       L.push('', 'Para vender (' + fmt(sale.total) + '):');
       sale.list.forEach(it => L.push('- ' + it.name + ': ' + fmt(it.v) + ' en ' + it.where + (it.sold ? ' (vendido)' : '')));
@@ -543,8 +550,26 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
     return L.join('\n');
   }
 
+  // ---------- Pareja o una persona ----------
+  let modo = 'pareja';
+  const T = (pl, sg) => modo === 'persona' ? sg : pl;
+  function setModo(m) {
+    const prev = modo; modo = m;
+    document.querySelectorAll('.seg button[data-modo]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.modo === m)));
+    document.querySelectorAll('[data-s]').forEach(el => {
+      if (el.dataset.p == null) el.dataset.p = el.innerHTML;
+      el.innerHTML = m === 'persona' ? el.dataset.s : el.dataset.p;
+    });
+    $('pareja').placeholder = m === 'persona' ? 'Ej.: Carlos Gómez' : 'Ej.: Andrés y Paola';
+    const from = prev === 'persona' ? COMP1 : COMP0, to = m === 'persona' ? COMP1 : COMP0;
+    document.querySelectorAll('.cm').forEach(i => { const k = from.indexOf(i.value); if (k >= 0) i.value = to[k]; });
+    update();
+  }
+  document.querySelectorAll('.seg button[data-modo]').forEach(b => b.addEventListener('click', () => setModo(b.dataset.modo)));
+
   // ---------- Compromisos y link a Nuestro avance ----------
   const COMP0 = ['No usar la tarjeta de crédito mientras pagamos', 'Abonar el extra a la primera deuda desde el próximo pago', 'Revisar el presupuesto juntos cada semana'];
+  const COMP1 = ['No usar la tarjeta de crédito mientras pago', 'Abonar el extra a la primera deuda desde el próximo pago', 'Revisar mi presupuesto cada semana con alguien de confianza'];
   function addComp(t) {
     const el = document.createElement('div'); el.className = 'inp';
     el.innerHTML = '<input class="np cm" value="' + esc(t || '') + '" placeholder="Compromiso" aria-label="Compromiso">';
@@ -559,7 +584,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
     const debts = readDebts().map(x => ({ n: x.name, ini: Math.round(x.s) }));
     const ventas = readItems().list.map(x => ({ n: x.name, v: x.v, w: x.where, sold: x.sold, real: x.sold ? x.v : 0 }));
     const checks = [...document.querySelectorAll('.cm')].map(i => i.value.trim()).filter(Boolean).map(t => ({ t, ok: false }));
-    const data = { v: 1, pareja: $('pareja').value.trim(), inicio: d.toISOString().slice(0, 10), cita: $('cita').value || '', debts, ventas, checks };
+    const data = { v: 1, modo, pareja: $('pareja').value.trim(), inicio: d.toISOString().slice(0, 10), cita: $('cita').value || '', debts, ventas, checks };
     let base; try { base = new URL('seguimiento.html', location.href).href.split('#')[0]; } catch (e) { base = 'https://fredyhenaodev.github.io/el-peso-de-la-deuda/seguimiento.html'; }
     if (!/^https?:/.test(base)) base = 'https://fredyhenaodev.github.io/el-peso-de-la-deuda/seguimiento.html';
     return base + '#plan=' + b64(JSON.stringify(data));
@@ -567,7 +592,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
   function updLink() {
     const url = planLink(), nom = $('pareja').value.trim();
     $('openLink').href = url;
-    $('sendLink').href = 'https://wa.me/?text=' + encodeURIComponent('Hola' + (nom ? ', ' + nom : '') + '. Aquí está su plan para salir de deudas. Ábranlo en el celular y guárdenlo: ahí van a anotar su avance cada mes.\n\n' + url + '\n\n“Ve y vende el aceite, y paga a tus acreedores.” 2 Reyes 4:7\n— F&T Asesorías');
+    $('sendLink').href = 'https://wa.me/?text=' + encodeURIComponent('Hola' + (nom ? ', ' + nom : '') + '. ' + T('Aquí está su plan para salir de deudas. Ábranlo en el celular y guárdenlo: ahí van a anotar su avance cada mes.', 'Aquí está tu plan para salir de deudas. Ábrelo en el celular y guárdalo: ahí vas a anotar tu avance cada mes.') + '\n\n' + url + '\n\n“Ve y vende el aceite, y paga a tus acreedores.” 2 Reyes 4:7\n— F&T Asesorías');
   }
   $('copyLink').addEventListener('click', () => {
     const url = planLink();
@@ -589,8 +614,8 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
   }));
   $('addItem').addEventListener('click', () => { addItem().querySelector('input').focus(); update(); });
   $('add').addEventListener('click', () => { addDebt(); const els = document.querySelectorAll('.debt'); els[els.length - 1].querySelector('input').focus(); });
-  document.querySelectorAll('.seg button').forEach(b => b.addEventListener('click', () => {
-    method = b.dataset.m; document.querySelectorAll('.seg button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); update();
+  document.querySelectorAll('.seg button[data-m]').forEach(b => b.addEventListener('click', () => {
+    method = b.dataset.m; document.querySelectorAll('.seg button[data-m]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); update();
   }));
   $('copy').addEventListener('click', () => {
     const t = resumen();
