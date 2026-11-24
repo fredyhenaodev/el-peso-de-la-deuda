@@ -623,7 +623,7 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
     const checks = [...document.querySelectorAll('.cm')].map(i => i.value.trim()).filter(Boolean).map(t => ({ t, ok: false }));
     const data = { v: 1, modo, pareja: $('pareja').value.trim(), inicio: d.toISOString().slice(0, 10), cita: $('cita').value || '', debts, ventas, checks };
     let base; try { base = new URL('seguimiento.html', location.href).href.split('#')[0]; } catch (e) { base = 'https://fredyhenaodev.github.io/el-peso-de-la-deuda/seguimiento.html'; }
-    if (!/^https?:/.test(base)) base = 'https://fredyhenaodev.github.io/el-peso-de-la-deuda/seguimiento.html';
+    if (!/^https?:/.test(base) || !/github\.io$/.test(location.hostname)) base = 'https://fredyhenaodev.github.io/el-peso-de-la-deuda/seguimiento.html';
     return base + '#plan=' + b64(JSON.stringify(data));
   }
   function updLink() {
@@ -659,7 +659,52 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
     try { navigator.clipboard.writeText(t).then(() => { $('status').textContent = 'Resumen copiado.'; }, () => { $('status').textContent = 'No se pudo copiar aquí.'; }); } catch (e) { $('status').textContent = 'No se pudo copiar aquí.'; }
   });
   $('print').addEventListener('click', () => { try { window.print(); } catch (e) {} });
+
+  // ---------- Guardar y cargar (lo usa la app de clientes) ----------
+  function getState() {
+    const val = id => digits($(id).value);
+    const g = {}; GASTOS.forEach((x, k) => { const v = val('g' + k); if (v) g[x[0]] = v; });
+    const an = {}; ANUAL.forEach((x, k) => { const v = val('a' + k); if (v) an[x[0]] = v; });
+    return {
+      v: 1, modo, pareja: $('pareja').value.trim(), i: [val('i1'), val('i2'), val('i3')], g, an,
+      gx: [...document.querySelectorAll('.xg')].map(el => ({ n: el.querySelector('.gxn').value.trim(), v: digits(el.querySelector('.gxv').value) })).filter(x => x.n || x.v),
+      debts: [...document.querySelectorAll('.debt')].map(el => { const k = el.dataset.k; return { n: $('dn' + k).value.trim(), s: digits($('ds' + k).value), t: $('dt' + k).value.trim(), u: $('du' + k).value, c: digits($('dc' + k).value) }; }).filter(d => d.n || d.s),
+      items: [...document.querySelectorAll('.item')].map(el => { const k = el.dataset.k; return { n: $('vn' + k).value.trim(), v: digits($('vv' + k).value), w: $('vw' + k).value, sold: $('vs' + k).checked }; }).filter(x => x.n || x.v),
+      extra: val('extra'), method, useSale: $('useSale').checked,
+      comps: [...document.querySelectorAll('.cm')].map(i => i.value.trim()).filter(Boolean), cita: $('cita').value || ''
+    };
+  }
+  function setState(st) {
+    st = st || {};
+    if ((st.modo || 'pareja') !== modo) setModo(st.modo || 'pareja');
+    $('pareja').value = st.pareja || '';
+    ['i1', 'i2', 'i3'].forEach((id, n) => { $(id).value = dots((st.i || [])[n] || 0); });
+    GASTOS.forEach((x, k) => { $('g' + k).value = dots((st.g || {})[x[0]] || 0); });
+    ANUAL.forEach((x, k) => { $('a' + k).value = dots((st.an || {})[x[0]] || 0); });
+    $('gastosX').innerHTML = ''; (st.gx || []).forEach(x => addGasto(x.n, x.v));
+    $('debts').innerHTML = ''; (st.debts && st.debts.length ? st.debts : [null]).forEach(d => addDebt(d ? { n: d.n || '', s: d.s || '', t: d.t || '', u: d.u || 'mv', c: d.c || '' } : null));
+    $('items').innerHTML = ''; (st.items || []).forEach(x => { const el = addItem({ n: x.n || '', v: x.v || '', w: x.w || 'Facebook Marketplace', tip: '' }); el.querySelector('input[type=checkbox]').checked = !!x.sold; });
+    $('extra').value = dots(st.extra || 0);
+    method = st.method === 'avalancha' ? 'avalancha' : 'nieve';
+    document.querySelectorAll('.seg button[data-m]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.m === method)));
+    $('useSale').checked = st.useSale !== false;
+    $('comps').innerHTML = ''; (st.comps && st.comps.length ? st.comps : (modo === 'persona' ? COMP1 : COMP0)).forEach(addComp);
+    if (st.cita) $('cita').value = st.cita;
+    update();
+  }
+  function summary() {
+    if (!last) update();
+    const L = last || {};
+    const f = L.debts && L.debts.length && L.ord ? L.debts[L.ord[0]].name : '';
+    return { nombre: $('pareja').value.trim(), modo, ingresos: Math.round(L.ing || 0), gastos: Math.round(L.gas || 0), cuotas: Math.round(L.cuotas || 0),
+      deuda: Math.round(L.deuda || 0), carga: L.carga ? Math.round(L.carga * 100) : 0, libre: Math.round(L.libre || 0), extra: Math.round(L.extra || 0),
+      primera: f, meses: L.plan && !L.plan.stuck ? L.plan.months : null, libreHacia: L.plan && !L.plan.stuck ? mesAno(L.plan.months) : '', resumen: resumen() };
+  }
+  window.FTAsesoria = { getState, setState, summary, onChange: null };
+  document.addEventListener('input', () => { if (window.FTAsesoria.onChange) window.FTAsesoria.onChange(); });
+  document.addEventListener('click', e => { if (e.target.closest('button') && window.FTAsesoria.onChange) window.FTAsesoria.onChange(); });
   update();
+  if (window.FT_ON_READY) window.FT_ON_READY(window.FTAsesoria);
 })();
 </script>
 </body>

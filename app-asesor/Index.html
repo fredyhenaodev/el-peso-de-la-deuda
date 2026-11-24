@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="es">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: lista de clientes (buscador, resumen, tarjetas) → ficha del cliente (datos, números de la asesoría, encuentros, notas). Una sola columna, celular primero. */
+:root {
+  --bg: #F7F2EA; --surface: #FFFDF9; --sky: #EFE4D3; --sky-2: #F6EEE2;
+  --ink: #3A2A1F; --ink-2: #5C4636; --muted: #7A6553; --line: #E3D6C4;
+  --accent: #8B5E3C; --accent-ink: #FFFDF9; --accent-soft: #F1E6D8; --dark: #5A3B25;
+  --good: #4F7A3A; --good-soft: #EAF1E2; --warn: #A6491A; --warn-soft: #FBEADC;
+  --f-display: 'Oswald', 'Arial Narrow', Arial, sans-serif;
+  --f-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 var(--f-ui); }
+[hidden] { display: none !important; }
+.wrap { max-width: 860px; margin: 0 auto; padding: 0 16px; }
+header.top { background: var(--dark); color: #FFF8EE; }
+header.top .wrap { padding-block: 18px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 12px; }
+.seal { width: 42px; height: 42px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #F4D58D, #B8862F 72%); color: #3A2A1F; display: grid; place-items: center; font: 600 15px var(--f-display); flex: none; }
+.brand b { font: 600 22px/1 var(--f-display); letter-spacing: .12em; text-transform: uppercase; display: block; }
+.brand span { font-size: 13px; color: #EBD9C3; }
+main .wrap { padding-block: 18px 60px; display: grid; gap: 16px; }
+h1, h2, h3 { margin: 0; line-height: 1.2; }
+h2 { font-size: 22px; }
+h3 { font-size: 17px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px; display: grid; gap: 12px; min-width: 0; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.btn { border: 0; background: var(--accent); color: var(--accent-ink); font: 700 15px var(--f-ui); border-radius: 12px; padding: 10px 16px; min-height: 44px; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+.btn.ghost { background: transparent; color: var(--accent); border: 2px solid var(--accent); }
+.btn.light { background: #FFF8EE; color: var(--dark); }
+.btn.small { min-height: 36px; padding: 6px 12px; font-size: 14px; }
+.btn.danger { background: var(--warn); }
+.btn:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, .cli:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.field { display: grid; gap: 4px; min-width: 0; }
+label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
+input, select, textarea { font: 500 16px var(--f-ui); color: var(--ink); background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 12px; min-height: 44px; width: 100%; }
+textarea { min-height: 90px; resize: vertical; line-height: 1.45; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.muted { color: var(--muted); font-size: 14px; margin: 0; }
+.toolbar { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; align-items: end; }
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.stat { background: var(--sky-2); border-radius: 14px; padding: 12px 14px; display: grid; }
+.stat span { font-size: 13px; color: var(--ink-2); }
+.stat b { font-size: 22px; font-variant-numeric: tabular-nums; }
+.list { display: grid; gap: 10px; }
+.cli { text-align: left; width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; display: grid; gap: 8px; cursor: pointer; font: inherit; color: inherit; }
+.cli:hover { border-color: var(--accent); }
+.cli .t { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.cli .t b { font-size: 17px; }
+.chip { display: inline-block; font-size: 12px; font-weight: 700; border-radius: 999px; padding: 2px 10px; background: var(--accent-soft); color: var(--accent); }
+.chip.good { background: var(--good-soft); color: var(--good); }
+.chip.warn { background: var(--warn-soft); color: var(--warn); }
+.chip.gray { background: var(--sky); color: var(--ink-2); }
+.bar { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--good); border-radius: 4px; }
+.cli .m { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.tile { background: var(--sky-2); border-radius: 14px; padding: 12px 14px; display: grid; gap: 2px; }
+.tile span { font-size: 13px; color: var(--ink-2); }
+.tile b { font-size: 19px; font-variant-numeric: tabular-nums; line-height: 1.25; }
+.tile.good { background: var(--good-soft); } .tile.good b { color: var(--good); }
+.back { color: var(--accent); font-weight: 700; background: none; border: 0; font: 700 15px var(--f-ui); cursor: pointer; padding: 8px 0; justify-self: start; }
+.head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+.enc { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.enc li { border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; display: grid; gap: 6px; }
+.enc .t { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-weight: 700; }
+.enc .k { display: flex; flex-wrap: wrap; gap: 6px; }
+.enc p { margin: 0; font-size: 14px; color: var(--ink-2); white-space: pre-wrap; }
+.form { border: 2px solid var(--accent); background: var(--accent-soft); }
+pre.res { white-space: pre-wrap; font: 13px/1.5 ui-monospace, monospace; background: var(--sky-2); border-radius: 12px; padding: 12px; margin: 0; max-height: 360px; overflow: auto; }
+details summary { cursor: pointer; font-weight: 700; color: var(--accent); }
+.toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--dark); color: #FFF8EE; padding: 12px 18px; border-radius: 12px; font-weight: 600; z-index: 50; max-width: 90vw; }
+.empty { text-align: center; padding: 30px 16px; color: var(--muted); }
+.loading { color: var(--muted); padding: 20px 0; }
+@media (max-width: 600px) {
+  .grid, .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .stat b { font-size: 17px; }
+  .toolbar { grid-template-columns: minmax(0, 1fr) auto; }
+  .toolbar .f-search { grid-column: 1 / -1; }
+  .grid2 { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><div class="seal">F&amp;T</div><div><b>F&amp;T Asesorías</b><span>Mis clientes</span></div></div>
+    <button type="button" class="btn light" id="nuevoBtn">+ Nuevo cliente</button>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <!-- Lista -->
+    <section id="vLista" aria-label="Clientes" style="display:grid;gap:16px">
+      <div class="stats">
+        <div class="stat"><span>Activos</span><b id="sAct">–</b></div>
+        <div class="stat"><span>Encuentros en 7 días</span><b id="sSem">–</b></div>
+        <div class="stat"><span>Deuda pagada</span><b id="sPag">–</b></div>
+      </div>
+      <div class="toolbar">
+        <div class="field f-search"><label for="buscar">Buscar</label><input id="buscar" placeholder="Nombre o teléfono" autocomplete="off"></div>
+        <div class="field"><label for="filtro">Ver</label><select id="filtro"><option value="activos">Activos</option><option value="todos">Todos</option><option value="Terminado">Terminados</option></select></div>
+      </div>
+      <div class="list" id="lista"><p class="loading">Cargando clientes…</p></div>
+    </section>
+
+    <!-- Nuevo -->
+    <section class="card form" id="vNuevo" hidden aria-labelledby="hNuevo">
+      <h2 id="hNuevo">Nuevo cliente</h2>
+      <div class="grid2">
+        <div class="field"><label for="nNombre">Nombre</label><input id="nNombre" placeholder="Ej.: Andrés y Paola, o Carlos Gómez"></div>
+        <div class="field"><label for="nTel">WhatsApp</label><input id="nTel" inputmode="tel" placeholder="Ej.: 300 123 4567"></div>
+        <div class="field"><label for="nTipo">Es</label><select id="nTipo"><option>Pareja</option><option>Persona</option></select></div>
+        <div class="field"><label for="nCita">Fecha de la asesoría</label><input id="nCita" type="date"></div>
+      </div>
+      <div class="row"><button type="button" class="btn" id="nCrear">Crear y abrir</button><button type="button" class="btn ghost" id="nCancel">Cancelar</button></div>
+    </section>
+
+    <!-- Ficha -->
+    <section id="vFicha" hidden style="display:grid;gap:16px">
+      <button type="button" class="back" id="volver">← Mis clientes</button>
+      <div class="card">
+        <div class="head">
+          <div style="display:grid;gap:6px">
+            <h2 id="fNombre"></h2>
+            <div class="row" id="fChips"></div>
+          </div>
+          <div class="row">
+            <a class="btn" id="fAsesoria" href="#">Abrir asesoría</a>
+            <a class="btn ghost" id="fWa" href="#" target="_blank" rel="noopener">WhatsApp</a>
+          </div>
+        </div>
+        <div class="tiles" id="fTiles"></div>
+        <div class="grid">
+          <div class="field"><label for="fEstado">Estado</label><select id="fEstado"><option>Asesoría</option><option>Acompañamiento</option><option>En pausa</option><option>Terminado</option></select></div>
+          <div class="field"><label for="fProx">Próximo encuentro</label><input id="fProx" type="date"></div>
+          <div class="field"><label for="fTel">WhatsApp</label><input id="fTel" inputmode="tel"></div>
+        </div>
+        <details id="fResBox"><summary>Ver el resumen de la asesoría</summary><pre class="res" id="fRes"></pre></details>
+      </div>
+
+      <div class="card">
+        <div class="head"><h3>Encuentros</h3><button type="button" class="btn small" id="eNuevo">+ Registrar encuentro</button></div>
+        <div class="card form" id="eForm" hidden>
+          <h3 id="eTitulo">Nuevo encuentro</h3>
+          <div class="grid">
+            <div class="field"><label for="eFecha">Fecha</label><input id="eFecha" type="date"></div>
+            <div class="field"><label for="eTipo">Encuentro</label><select id="eTipo"><option>Asesoría inicial</option><option>1. Arranque</option><option>2. Primer mes</option><option>3. Celebración</option><option>4. Mitad del camino</option><option>5. Cierre</option><option>Otro</option></select></div>
+            <div class="field"><label for="eDeuda" id="eDeudaL">¿Cuánto deben hoy?</label><input id="eDeuda" inputmode="numeric" placeholder="$ 0"></div>
+            <div class="field"><label for="eComp" id="eCompL">¿Cumplieron los compromisos?</label><select id="eComp"><option value="">—</option><option>Sí</option><option>A medias</option><option>No</option></select></div>
+            <div class="field"><label for="eNueva" id="eNuevaL">¿Sacaron deuda nueva o usaron la tarjeta?</label><select id="eNueva"><option value="">—</option><option>No</option><option>Sí</option></select></div>
+            <div class="field"><label for="eAnimo" id="eAnimoL">¿Cómo están con la plata?</label><select id="eAnimo"><option value="">—</option><option>Bien</option><option>Regular</option><option>Difícil</option></select></div>
+          </div>
+          <div class="grid2">
+            <div class="field"><label for="eNotas">Notas del encuentro</label><textarea id="eNotas" placeholder="Qué pasó, qué les preocupa, de qué hablaron…"></textarea></div>
+            <div class="field"><label for="eComps">Nuevos compromisos</label><textarea id="eComps" placeholder="Uno por línea"></textarea></div>
+          </div>
+          <div class="field" style="max-width:260px"><label for="eProx">Próximo encuentro</label><input id="eProx" type="date"></div>
+          <div class="row"><button type="button" class="btn" id="eGuardar">Guardar encuentro</button><button type="button" class="btn ghost" id="eCancel">Cancelar</button></div>
+        </div>
+        <ul class="enc" id="eLista"></ul>
+      </div>
+
+      <div class="card">
+        <h3>Notas</h3>
+        <textarea id="fNotas" placeholder="Lo que quieras recordar de esta persona o pareja: situación familiar, peticiones de oración, acuerdos…"></textarea>
+        <div class="row"><button type="button" class="btn ghost small" id="fNotasG">Guardar notas</button><span class="muted" id="fNotasS"></span></div>
+      </div>
+    </section>
+  </div>
+</main>
+<div class="toast" id="toast" hidden role="status"></div>
+
+<script>
+(function () {
+  const APP_URL = <?!= JSON.stringify(appUrl) ?>;
+  const ABRIR = <?!= JSON.stringify(abrirId) ?>;
+  const $ = id => document.getElementById(id);
+  const money = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
+  const fmt = v => money.format(Math.round(Number(v) || 0)).replace(/\$[\s ]*/, '$');
+  const digits = s => Number(String(s).replace(/[^\d]/g, '')) || 0;
+  const dots = n => n ? Number(n).toLocaleString('es-CO') : '';
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const iso = d => { d = new Date(d); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); };
+  const today = () => iso(new Date());
+  const pd = s => { const [y, m, d] = String(s).split('-').map(Number); return new Date(y, (m || 1) - 1, d || 1); };
+  const fechaTxt = s => s ? pd(s).toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short' }) : '';
+  const dias = s => s ? Math.round((pd(s) - pd(today())) / 864e5) : null;
+  const run = (fn, ...a) => new Promise((res, rej) => google.script.run.withSuccessHandler(res).withFailureHandler(rej)[fn](...a));
+  function toast(t) { $('toast').textContent = t; $('toast').hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { $('toast').hidden = true; }, 3200); }
+  const err = e => toast('Algo salió mal: ' + ((e && e.message) || e));
+  const waLink = tel => { let n = String(tel || '').replace(/\D/g, ''); if (n.length === 10) n = '57' + n; return n ? 'https://wa.me/' + n : ''; };
+
+  let clientes = [], actual = null, editando = null;
+
+  // ---------- Lista ----------
+  function cuando(s) {
+    const d = dias(s); if (d == null) return '';
+    return d < 0 ? 'hace ' + (-d) + ' días' : d === 0 ? 'hoy' : d === 1 ? 'mañana' : 'en ' + d + ' días';
+  }
+  function renderLista() {
+    const q = $('buscar').value.trim().toLowerCase(), f = $('filtro').value;
+    const act = clientes.filter(c => c['Estado'] !== 'Terminado');
+    $('sAct').textContent = act.length;
+    $('sSem').textContent = act.filter(c => { const d = dias(c['Próximo encuentro']); return d != null && d >= 0 && d <= 7; }).length;
+    $('sPag').textContent = fmt(clientes.reduce((a, c) => a + Math.max(0, (Number(c['Deuda inicial']) || 0) - (Number(c['Deuda actual']) || 0)), 0));
+    let L = clientes.filter(c => f === 'todos' ? true : f === 'activos' ? c['Estado'] !== 'Terminado' : c['Estado'] === f)
+      .filter(c => !q || String(c['Nombre']).toLowerCase().includes(q) || String(c['Teléfono']).replace(/\D/g, '').includes(q.replace(/\D/g, '') || '§'));
+    L.sort((a, b) => { const x = a['Próximo encuentro'] || '9999', y = b['Próximo encuentro'] || '9999'; return x < y ? -1 : x > y ? 1 : String(a['Nombre']).localeCompare(String(b['Nombre'])); });
+    if (!clientes.length) { $('lista').innerHTML = '<div class="empty card"><b>Todavía no tienes clientes.</b><p class="muted">Toca “+ Nuevo cliente” para crear el primero y hacer su asesoría.</p></div>'; return; }
+    if (!L.length) { $('lista').innerHTML = '<p class="empty">Nadie coincide con la búsqueda.</p>'; return; }
+    $('lista').innerHTML = L.map(c => {
+      const ini = Number(c['Deuda inicial']) || 0, p = Number(c['% pagado']) || 0, d = dias(c['Próximo encuentro']);
+      const cls = d == null ? 'gray' : d < 0 ? 'warn' : d <= 7 ? '' : 'gray';
+      return '<button type="button" class="cli" data-id="' + esc(c['ID']) + '"><div class="t"><b>' + esc(c['Nombre'] || 'Sin nombre') + '</b><span class="row" style="gap:6px"><span class="chip gray">' + esc(c['Tipo'] || 'Pareja') + '</span><span class="chip ' + (c['Estado'] === 'Terminado' ? 'good' : '') + '">' + esc(c['Estado'] || '') + '</span></span></div>' +
+        (ini ? '<div class="bar"><i style="width:' + Math.min(100, p) + '%"></i></div>' : '') +
+        '<div class="m"><span>' + (ini ? 'Debe ' + fmt(c['Deuda actual']) + ' de ' + fmt(ini) + ' · ' + p + ' % pagado' : 'Sin asesoría todavía') + '</span>' +
+        (c['Próximo encuentro'] ? '<span class="chip ' + cls + '">Encuentro ' + esc(fechaTxt(c['Próximo encuentro'])) + ' · ' + cuando(c['Próximo encuentro']) + '</span>' : '') + '</div></button>';
+    }).join('');
+    $('lista').querySelectorAll('.cli').forEach(b => b.addEventListener('click', () => abrir(b.dataset.id)));
+  }
+  async function cargarLista() {
+    try { clientes = await run('listarClientes'); renderLista(); }
+    catch (e) { $('lista').innerHTML = '<p class="empty">No se pudo cargar la lista. Recarga la página.</p>'; err(e); }
+  }
+  $('buscar').addEventListener('input', renderLista);
+  $('filtro').addEventListener('change', renderLista);
+
+  // ---------- Vistas ----------
+  function ver(v) {
+    $('vLista').hidden = v !== 'lista'; $('vNuevo').hidden = v !== 'nuevo'; $('vFicha').hidden = v !== 'ficha';
+    window.scrollTo(0, 0);
+  }
+  $('nuevoBtn').addEventListener('click', () => { $('nNombre').value = ''; $('nTel').value = ''; $('nTipo').value = 'Pareja'; $('nCita').value = today(); ver('nuevo'); $('nNombre').focus(); });
+  $('nCancel').addEventListener('click', () => ver('lista'));
+  $('nCrear').addEventListener('click', async () => {
+    const nombre = $('nNombre').value.trim(); if (!nombre) { $('nNombre').focus(); toast('Escribe el nombre.'); return; }
+    $('nCrear').disabled = true;
+    try {
+      const id = await run('guardarCliente', { Nombre: nombre, Tipo: $('nTipo').value, 'Teléfono': $('nTel').value.trim(), 'Próximo encuentro': $('nCita').value || '' });
+      await cargarLista(); await abrir(id); toast('Cliente creado. Ahora abre la asesoría.');
+    } catch (e) { err(e); } finally { $('nCrear').disabled = false; }
+  });
+  $('volver').addEventListener('click', () => { actual = null; ver('lista'); cargarLista(); });
+
+  // ---------- Ficha ----------
+  const T = (pl, sg) => actual && actual.cliente['Tipo'] === 'Persona' ? sg : pl;
+  async function abrir(id) {
+    ver('ficha'); $('fNombre').textContent = 'Cargando…'; $('eLista').innerHTML = ''; $('fTiles').innerHTML = ''; $('eForm').hidden = true;
+    try { actual = await run('obtenerCliente', id); renderFicha(); }
+    catch (e) { err(e); ver('lista'); }
+  }
+  function renderFicha() {
+    const c = actual.cliente, ini = Number(c['Deuda inicial']) || 0, hoy = Number(c['Deuda actual']) || 0;
+    $('fNombre').textContent = c['Nombre'] || 'Sin nombre';
+    $('fChips').innerHTML = '<span class="chip gray">' + esc(c['Tipo']) + '</span>' + (c['Fecha asesoría'] ? '<span class="chip gray">Asesoría: ' + esc(fechaTxt(c['Fecha asesoría'])) + '</span>' : '');
+    $('fAsesoria').href = APP_URL + '?page=asesoria&id=' + encodeURIComponent(c['ID']);
+    $('fAsesoria').textContent = actual.cliente.tieneAsesoria ? 'Abrir asesoría' : 'Hacer la asesoría';
+    const wa = waLink(c['Teléfono']); $('fWa').hidden = !wa; $('fWa').href = wa;
+    $('fEstado').value = c['Estado'] || 'Asesoría'; $('fProx').value = c['Próximo encuentro'] || ''; $('fTel').value = c['Teléfono'] || '';
+    $('fNotas').value = c['Notas'] || ''; $('fNotasS').textContent = '';
+    $('fTiles').innerHTML = ini ? [
+      ['Deuda inicial', fmt(ini)], ['Deuda hoy', fmt(hoy)], ['Pagado', (Number(c['% pagado']) || 0) + ' % · ' + fmt(Math.max(0, ini - hoy)), 'good'],
+      ['Abono extra', fmt(c['Abono extra']) + '/mes'], ['Primera deuda', esc(c['Primera deuda'] || '—')], ['Libres hacia', esc(c['Libres hacia'] || '—')]
+    ].map(t => '<div class="tile ' + (t[2] || '') + '"><span>' + t[0] + '</span><b>' + t[1] + '</b></div>').join('')
+      : '<p class="muted" style="grid-column:1/-1">Aún no tiene asesoría guardada. Toca “Hacer la asesoría” para llenarla con ' + T('ellos', 'esta persona') + '.</p>';
+    $('fResBox').hidden = !c['Resumen']; $('fRes').textContent = c['Resumen'] || '';
+    $('eDeudaL').textContent = T('¿Cuánto deben hoy?', '¿Cuánto debe hoy?');
+    $('eCompL').textContent = T('¿Cumplieron los compromisos?', '¿Cumplió los compromisos?');
+    $('eNuevaL').textContent = T('¿Sacaron deuda nueva o usaron la tarjeta?', '¿Sacó deuda nueva o usó la tarjeta?');
+    $('eAnimoL').textContent = T('¿Cómo están con la plata?', '¿Cómo está con la plata?');
+    renderEncuentros();
+  }
+  function renderEncuentros() {
+    const E = actual.encuentros;
+    if (!E.length) { $('eLista').innerHTML = '<li class="muted" style="border:0;padding:4px 0">Todavía no hay encuentros registrados.</li>'; return; }
+    $('eLista').innerHTML = E.map((e, i) => {
+      const k = [];
+      if (e['Deuda hoy'] !== '' && e['Deuda hoy'] != null) k.push('<span class="chip gray">Deuda: ' + fmt(e['Deuda hoy']) + '</span>');
+      if (e['Compromisos']) k.push('<span class="chip ' + (e['Compromisos'] === 'Sí' ? 'good' : e['Compromisos'] === 'No' ? 'warn' : '') + '">Compromisos: ' + esc(e['Compromisos']) + '</span>');
+      if (e['Deuda nueva']) k.push('<span class="chip ' + (e['Deuda nueva'] === 'Sí' ? 'warn' : 'good') + '">Deuda nueva: ' + esc(e['Deuda nueva']) + '</span>');
+      if (e['Ánimo']) k.push('<span class="chip ' + (e['Ánimo'] === 'Bien' ? 'good' : e['Ánimo'] === 'Difícil' ? 'warn' : '') + '">Ánimo: ' + esc(e['Ánimo']) + '</span>');
+      return '<li><div class="t"><span>' + esc(e['Encuentro'] || 'Encuentro') + '</span><span class="muted">' + esc(fechaTxt(e['Fecha'])) + '</span></div>' +
+        (k.length ? '<div class="k">' + k.join('') + '</div>' : '') +
+        (e['Notas'] ? '<p>' + esc(e['Notas']) + '</p>' : '') +
+        (e['Nuevos compromisos'] ? '<p><b>Compromisos:</b>\n' + esc(e['Nuevos compromisos']) + '</p>' : '') +
+        '<div class="row"><button type="button" class="btn ghost small" data-ed="' + i + '">Editar</button><button type="button" class="btn ghost small" data-del="' + i + '">Borrar</button><span class="muted" data-ask="' + i + '" hidden>¿Borrar este encuentro? <button type="button" class="btn danger small" data-yes="' + i + '">Sí, borrar</button></span></div></li>';
+    }).join('');
+    $('eLista').querySelectorAll('[data-ed]').forEach(b => b.addEventListener('click', () => abrirForm(E[b.dataset.ed])));
+    $('eLista').querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', () => { $('eLista').querySelector('[data-ask="' + b.dataset.del + '"]').hidden = false; }));
+    $('eLista').querySelectorAll('[data-yes]').forEach(b => b.addEventListener('click', async () => {
+      try { await run('eliminarEncuentro', E[b.dataset.yes]['ID']); await abrir(actual.cliente['ID']); toast('Encuentro borrado.'); } catch (e) { err(e); }
+    }));
+  }
+  const ETAPAS = ['Asesoría inicial', '1. Arranque', '2. Primer mes', '3. Celebración', '4. Mitad del camino', '5. Cierre'];
+  function abrirForm(e) {
+    editando = e || null;
+    $('eTitulo').textContent = e ? 'Editar encuentro' : 'Nuevo encuentro';
+    const ult = actual.encuentros[0];
+    const sig = ult ? ETAPAS[Math.min(ETAPAS.length - 1, ETAPAS.indexOf(ult['Encuentro']) + 1)] || 'Otro' : (actual.cliente.tieneAsesoria ? '1. Arranque' : 'Asesoría inicial');
+    $('eFecha').value = e ? e['Fecha'] : today();
+    $('eTipo').value = e ? (e['Encuentro'] || 'Otro') : sig;
+    $('eDeuda').value = e ? dots(e['Deuda hoy']) : '';
+    $('eComp').value = e ? (e['Compromisos'] || '') : ''; $('eNueva').value = e ? (e['Deuda nueva'] || '') : ''; $('eAnimo').value = e ? (e['Ánimo'] || '') : '';
+    $('eNotas').value = e ? (e['Notas'] || '') : ''; $('eComps').value = e ? (e['Nuevos compromisos'] || '') : '';
+    $('eProx').value = e ? (e['Próximo encuentro'] || '') : '';
+    $('eForm').hidden = false; $('eForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  $('eNuevo').addEventListener('click', () => abrirForm(null));
+  $('eCancel').addEventListener('click', () => { $('eForm').hidden = true; });
+  $('eDeuda').addEventListener('blur', () => { $('eDeuda').value = dots(digits($('eDeuda').value)); });
+  $('eGuardar').addEventListener('click', async () => {
+    const o = { 'Cliente ID': actual.cliente['ID'], 'Fecha': $('eFecha').value || today(), 'Encuentro': $('eTipo').value,
+      'Deuda hoy': $('eDeuda').value.trim() === '' ? '' : digits($('eDeuda').value), 'Compromisos': $('eComp').value, 'Deuda nueva': $('eNueva').value,
+      'Ánimo': $('eAnimo').value, 'Notas': $('eNotas').value.trim(), 'Nuevos compromisos': $('eComps').value.trim(), 'Próximo encuentro': $('eProx').value || '' };
+    if (editando) o.ID = editando['ID'];
+    $('eGuardar').disabled = true;
+    try { await run('guardarEncuentro', o); await abrir(actual.cliente['ID']); toast('Encuentro guardado.'); }
+    catch (e) { err(e); } finally { $('eGuardar').disabled = false; }
+  });
+  async function guardarCampo(campos, msg) {
+    try { await run('guardarCliente', Object.assign({ ID: actual.cliente['ID'] }, campos)); Object.assign(actual.cliente, campos); if (msg) toast(msg); renderFicha(); }
+    catch (e) { err(e); }
+  }
+  $('fEstado').addEventListener('change', () => guardarCampo({ 'Estado': $('fEstado').value }, 'Estado actualizado.'));
+  $('fProx').addEventListener('change', () => guardarCampo({ 'Próximo encuentro': $('fProx').value }, 'Fecha guardada.'));
+  $('fTel').addEventListener('change', () => guardarCampo({ 'Teléfono': $('fTel').value.trim() }, 'Teléfono guardado.'));
+  $('fNotasG').addEventListener('click', async () => { await guardarCampo({ 'Notas': $('fNotas').value }); $('fNotasS').textContent = 'Guardado.'; });
+
+  cargarLista().then(() => { if (ABRIR) abrir(ABRIR); });
+})();
+</script>
+</body>
+</html>
