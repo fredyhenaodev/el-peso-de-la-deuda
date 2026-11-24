@@ -38,6 +38,15 @@ main .wrap { padding-block: 12px 48px; display: grid; gap: 20px; }
 .step-head p { margin: 0; color: var(--muted); font-size: 15px; }
 .grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 24px; }
 .grid4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; }
+.ggroups { display: grid; gap: 18px; }
+.ggroup h4 { margin: 0 0 8px; font-size: 14px; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--line); padding-bottom: 4px; }
+.ggroup h4 span { color: var(--ink-2); font-variant-numeric: tabular-nums; letter-spacing: 0; text-transform: none; }
+.ggroup .grid4 { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; }
+.extra-g { display: grid; gap: 8px; }
+.xg .x { border: 0; background: transparent; color: var(--muted); font-size: 24px; width: 44px; height: 48px; cursor: pointer; border-radius: 10px; }
+.xg .x:hover { background: var(--warn-soft); color: var(--warn); }
+.xg { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto; gap: 8px; align-items: end; }
 .field { display: grid; gap: 5px; align-content: start; }
 label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
 .hint { font-size: 13px; color: var(--muted); margin: 0; }
@@ -138,6 +147,8 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
   .tiles.plan { grid-template-columns: minmax(0, 1fr) !important; }
   #anual { grid-template-columns: minmax(0, 1fr) !important; }
   #gridComp, #gridIng { grid-template-columns: minmax(0, 1fr); }
+  .g3, .ggroup .grid4 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; }
+  .xg { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; }
   .step:has(#h4s) > .grid2 { grid-template-columns: minmax(0, 1fr); }
   .seg { display: flex; width: 100%; }
   .compare th, .compare td { padding: 8px 4px; font-size: 13px; }
@@ -174,19 +185,24 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
         </div>
       </div>
       <div class="field" style="max-width:420px"><label for="pareja"><span data-s="Nombre">Nombre de la pareja</span></label><div class="inp"><input id="pareja" class="np" placeholder="Ej.: Andrés y Paola"></div></div>
-      <div class="grid2" id="gridIng">
+      <div class="grid2" id="gridIng" style="grid-template-columns:minmax(0,1fr)">
         <div class="box">
           <h3>Ingresos</h3>
+          <div class="grid4 g3">
           <div class="field"><label for="i1"><span data-s="Sueldo o ingreso principal">Ingresos de él</span></label><div class="inp"><span class="pre">$</span><input id="i1" class="m" inputmode="numeric" value="3.200.000"></div></div>
           <div class="field"><label for="i2"><span data-s="Otro ingreso fijo (pensión, arriendo…)">Ingresos de ella</span></label><div class="inp"><span class="pre">$</span><input id="i2" class="m" inputmode="numeric" value="1.300.000"></div></div>
           <div class="field"><label for="i3">Negocio, trabajos extra u otros</label><div class="inp"><span class="pre">$</span><input id="i3" class="m" inputmode="numeric" placeholder="0"></div></div>
+          </div>
           <div class="sum"><span>Total ingresos</span><span id="tIng"></span></div>
         </div>
         <div class="box">
-          <h3>Gastos fijos</h3>
-          <div class="grid2" id="gastos"></div>
+          <h3>Gastos del mes</h3>
+          <p class="hint" style="font-size:14px;color:var(--ink-2)"><span data-s="Revisa extractos, Nequi o Daviplata para no olvidar ninguno. Lo que no aplique, déjalo en 0.">Revisen extractos, Nequi o Daviplata para no olvidar ninguno. Lo que no aplique, déjenlo en 0.</span> Las cuotas de deudas van en el paso 2, no aquí.</p>
+          <div id="gastos" class="ggroups"></div>
+          <div class="extra-g" id="gastosX"></div>
+          <div class="row noprint"><button type="button" class="btn ghost" id="addGasto" style="min-height:40px;padding:8px 12px;font-size:14px">+ Otro gasto que no esté en la lista</button></div>
           <div class="sum"><span>Total gastos</span><span id="tGas"></span></div>
-          <p class="hint">En seguros, los que pagan aparte. Si el seguro viene incluido en la cuota de un crédito, no lo repitan aquí: ya está en la cuota.</p>
+          <p class="hint"><span data-s="En seguros, los que pagas aparte. Si el seguro viene incluido en la cuota de un crédito, no lo repitas aquí: ya está en la cuota.">En seguros, los que pagan aparte. Si el seguro viene incluido en la cuota de un crédito, no lo repitan aquí: ya está en la cuota.</span></p>
         </div>
       </div>
       <div class="box" style="background:var(--accent-soft)">
@@ -345,10 +361,29 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
   function mesAno(m) { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + m); const s = d.toLocaleDateString('es-CO', { month: 'long', year: 'numeric' }); return s.charAt(0).toUpperCase() + s.slice(1); }
 
   // ---------- Gastos ----------
-  const GASTOS = [['Diezmo y ofrendas', 450000], ['Arriendo o administración', 1100000], ['Servicios y celular', 420000], ['Mercado', 900000], ['Transporte o gasolina', 300000], ['Educación', 0], ['Salud', 0], ['Seguros (vida, carro, hogar)', 0], ['Otros', 200000]];
+  const GRUPOS = [
+    ['Hogar', [['Arriendo', 950000], ['Administración', 150000], ['Luz, agua y gas', 280000], ['Internet, TV y celular', 140000], ['Mercado', 900000], ['Aseo y artículos del hogar', 0], ['Empleada o servicio doméstico', 0]]],
+    ['Transporte', [['Gasolina o pasajes', 300000], ['Parqueadero y peajes', 0], ['Mantenimiento del vehículo', 0], ['Taxis, Uber o domicilios de transporte', 0]]],
+    ['Familia', [['Pensión del colegio o universidad', 0], ['Transporte escolar, útiles y meriendas', 0], ['Guardería o cuidado de niños', 0], ['Pañales, leche y cosas del bebé', 0], ['Ayuda a padres o familiares', 0], ['Mascotas', 0]]],
+    ['Salud y personal', [['Salud (EPS, medicinas, citas)', 0], ['Medicina prepagada', 0], ['Seguros (vida, carro, hogar)', 0], ['Cuidado personal (peluquería, cosméticos)', 0], ['Ropa y calzado', 0], ['Gimnasio o deporte', 0]]],
+    ['Iglesia, gustos y otros', [['Diezmo y ofrendas', 450000], ['Restaurantes y domicilios', 0], ['Salidas y entretenimiento', 0], ['Suscripciones (Netflix, Spotify, apps)', 0], ['Regalos y celebraciones', 0], ['Ahorro programado', 0], ['Otros', 200000]]]
+  ];
+  const GASTOS = []; GRUPOS.forEach(([g, items], gi) => items.forEach(it => GASTOS.push([it[0], it[1], gi])));
   const ANUAL = [['SOAT', 0], ['Revisión técnico-mecánica', 0], ['Impuesto del vehículo', 0], ['Impuesto predial de la casa', 0], ['Declaración de renta (lo que les toque pagar)', 0], ['Otros del año (matrículas, útiles, diciembre)', 0]];
   $('anual').innerHTML = ANUAL.map((g, k) => '<div class="field"><label for="a' + k + '">' + g[0] + '</label><div class="inp"><span class="pre">$</span><input id="a' + k + '" class="m" inputmode="numeric" value="' + dots(g[1]) + '" placeholder="0"><span class="suf">al año</span></div></div>').join('');
-  $('gastos').innerHTML = GASTOS.map((g, k) => '<div class="field"><label for="g' + k + '">' + g[0] + '</label><div class="inp"><span class="pre">$</span><input id="g' + k + '" class="m" inputmode="numeric" value="' + dots(g[1]) + '" placeholder="0"></div></div>').join('');
+  $('gastos').innerHTML = GRUPOS.map(([g], gi) => '<div class="ggroup"><h4>' + g + '<span id="gs' + gi + '"></span></h4><div class="grid4">' +
+    GASTOS.map((x, k) => x[2] !== gi ? '' : '<div class="field"><label for="g' + k + '">' + x[0] + '</label><div class="inp"><span class="pre">$</span><input id="g' + k + '" class="m" inputmode="numeric" value="' + dots(x[1]) + '" placeholder="0"></div></div>').join('') +
+    '</div></div>').join('');
+  let gxId = 0;
+  function addGasto(n, v) {
+    const k = gxId++, el = document.createElement('div'); el.className = 'xg';
+    el.innerHTML = '<div class="field"><label for="gxn' + k + '">Gasto</label><div class="inp"><input id="gxn' + k + '" class="np gxn" value="' + esc(n || '') + '" placeholder="Ej.: Cuota de la moto del hijo"></div></div>' +
+      '<div class="field"><label for="gxv' + k + '">Al mes</label><div class="inp"><span class="pre">$</span><input id="gxv' + k + '" class="m gxv" inputmode="numeric" value="' + dots(v || 0) + '" placeholder="0"></div></div>' +
+      '<button type="button" class="x" aria-label="Quitar gasto">×</button>';
+    el.querySelector('.x').addEventListener('click', () => { el.remove(); update(); });
+    $('gastosX').appendChild(el); bind(el); return el;
+  }
+  $('addGasto').addEventListener('click', () => { addGasto().querySelector('.gxn').focus(); update(); });
 
   // ---------- Deudas ----------
   const EJ = [
@@ -458,7 +493,9 @@ label, .lbl { font-size: 14px; font-weight: 600; color: var(--ink-2); }
   function update() {
     const ing = ['i1', 'i2', 'i3'].reduce((a, id) => a + digits($(id).value), 0);
     const anu = ANUAL.reduce((a, g, k) => a + digits($('a' + k).value), 0), anuM = anu / 12;
-    const gas = GASTOS.reduce((a, g, k) => a + digits($('g' + k).value), 0) + anuM;
+    const gx = [...document.querySelectorAll('.gxv')].reduce((a, i) => a + digits(i.value), 0);
+    GRUPOS.forEach((g, gi) => { const t = GASTOS.reduce((a, x, k) => a + (x[2] === gi ? digits($('g' + k).value) : 0), 0); $('gs' + gi).textContent = t ? fmt(t) : ''; });
+    const gas = GASTOS.reduce((a, g, k) => a + digits($('g' + k).value), 0) + gx + anuM;
     $('tAnu').textContent = fmt(anu); $('tAnuM').textContent = fmt(anuM);
     $('tIng').textContent = fmt(ing); $('tGas').textContent = fmt(gas) + (anuM ? ' (con ' + fmt(anuM) + ' del año)' : '');
     const debts = readDebts();
